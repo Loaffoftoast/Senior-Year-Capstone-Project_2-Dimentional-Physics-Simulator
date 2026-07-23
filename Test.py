@@ -5,27 +5,23 @@ import Library
 
 pygame.init()
 
-Library.startSimulation()
-#os.environ['SDL_VIDEO_WINDOW_POS'] = "center"
+#Library.startSimulation()
+os.environ['SDL_VIDEO_WINDOW_POS'] = "center"
 resWidth, resHeight = pygame.display.get_desktop_sizes()[0]
-#screen = pygame.display.set_mode((resWidth // 1.25, resHeight // 1.25), pygame.RESIZABLE)
+screen = pygame.display.set_mode((resWidth // 1.25, resHeight // 1.25), pygame.RESIZABLE)
 
 isFullscreen = False
-running = Library.running
+running = True
 while running: 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    windowRect = Library.screen.get_rect()
+    windowRect = screen.get_rect()
     windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
 
     pygame.draw.circle(screen, (255, 255, 255), (windowCenter), 5)
     if event.type == pygame.KEYDOWN:
-        Library.checkKey(event.key)
-        
-    #def checkKey(keyPressed):
-        '''
         if event.key == pygame.K_ESCAPE:
             running = False
 
@@ -39,7 +35,7 @@ while running:
                 os.environ['SDL_VIDEO_WINDOW_POS'] = "centered"
                 pygame.display.quit(); pygame.display.init()
                 screen = pygame.display.set_mode((resWidth // 1.25, resHeight // 1.25), pygame.RESIZABLE)
-        '''
+
     pygame.display.flip()
 
 pygame.quit()
