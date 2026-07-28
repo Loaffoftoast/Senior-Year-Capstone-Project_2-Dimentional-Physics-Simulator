@@ -2,61 +2,70 @@
 import os
 import pygame
 
-pygame.init()
-
-screen = pygame.display.set_mode((0, 0))
+pygame.init() #Runs all the code below
 
 class sim:
-    running = False
-    def start():
+    running = False #running is the variable used to see if the loop is active
+    def start():    #start function begins the loop
         sim.running = True
-        pygame.display.set_caption("Test")
+        pygame.display.set_caption("Physics Simulation Senior Project - Alex LD")
 
-    def stop():
+    def stop(): #stop ends the loop
         sim.running = False
 
     def fullscreen(bool):
-        global screen
-        if bool == True:
-            os.environ['SDL_VIDEO_WINDOW_POS'] = "0, 0"
-            pygame.display.quit(); pygame.display.init()
-            screen = pygame.display.set_mode((0, 0))
-        else:
-            os.environ['SDL_VIDEO_WINDOW_POS'] = "centered"
-            pygame.display.quit(); pygame.display.init()
-            screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE)
+        #global screen # pulls global screen variable from the code to use in this function
+
+        if bool == True: # if the function sets fullscreen (bool) to 'True', it fullscreens the display
+
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "0, 0"  # sets the window to top left (default) in order to position the display correctly
+            pygame.display.quit(); pygame.display.init() # stops the display and starts it again in order to save the screen position
+            display.screen = pygame.display.set_mode((0, 0))     # sets the screen size to (0, 0), which defaults it to the whole screen
+
+        else: # if fullscreen is 'False'
+
+            os.environ['SDL_VIDEO_WINDOW_POS'] = "centered" # centers the window so that the non-fullscreen display starts in the middle
+            pygame.display.quit(); pygame.display.init()    # stops and starts display to save
+            display.screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE)   
+                # above sets display size to smaller than fullscreen so that it can be Windowed + Resized
 
 class keybind:
+    # all functions below are if a specific key is pressed, it does the below actions
     def esc():
         sim.stop()
 
     def F11():
-        display.isFullscreen = not display.isFullscreen
+        display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
         sim.fullscreen(display.isFullscreen)
 
 class display:
-    isFullscreen = False
-    resWidth, resHeight = pygame.display.get_desktop_sizes()[0]
+    screen = pygame.display.set_mode((0, 0)) # sets the display value to be a variable in order to define itself correctly
+    isFullscreen = False # inits isFullscreen variable
+
+    resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
     windowRect = screen.get_rect()
     windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
+
     def findScreenValues():
-        global resWidth, resHeight, windowRect, windowCenter
-        resWidth, resHeight = pygame.display.get_desktop_sizes()[0]
-        windowRect = screen.get_rect()
-        windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
+        display.resWidth, display.resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to the length and width of your moniter
+        display.windowRect = display.screen.get_rect() # finds positions of different points on the display
+        display.windowCenter = ((display.windowRect.left + display.windowRect.right) // 2, (display.windowRect.top + display.windowRect.bottom) // 2)
 
 
+
+# due to the previous comments on functions, I hope below code can be inferred only by looking back at functions (with a few exceptions)
 
 sim.fullscreen(False)
 sim.start()
+
 while sim.running: 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for event in pygame.event.get(): # when any event happens
+        if event.type == pygame.QUIT: # pygame.QUIT = simply closing the application
             sim.stop()
 
     display.findScreenValues()
 
-    pygame.draw.circle(screen, (255, 255, 255), (windowCenter), 5)
+    pygame.draw.circle(display.screen, (255, 255, 255), (display.windowCenter), 5) # creates a white circle w/ radius of 5 pixels in center of screen
 
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
@@ -65,7 +74,6 @@ while sim.running:
         if event.key == pygame.K_F11:
             keybind.F11()
 
-
-    pygame.display.flip()
+    pygame.display.flip() # updates the entire contents of the display with whatever drawn in code
 
 pygame.quit()
