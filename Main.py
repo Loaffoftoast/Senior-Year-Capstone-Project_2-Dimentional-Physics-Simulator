@@ -4,15 +4,16 @@ import pygame
 
 pygame.init()
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "center"
 screen = pygame.display.set_mode((0, 0))
-pygame.display.set_caption("Test")
-running = True
 
 class sim:
+    running = False
+    def start():
+        sim.running = True
+        pygame.display.set_caption("Test")
+
     def stop():
-        global running
-        running = False
+        sim.running = False
 
     def fullscreen(bool):
         global screen
@@ -44,8 +45,11 @@ class display:
         windowRect = screen.get_rect()
         windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
 
+
+
 sim.fullscreen(False)
-while running: 
+sim.start()
+while sim.running: 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sim.stop()
