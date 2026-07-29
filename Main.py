@@ -14,23 +14,21 @@ class sim:
         sim.running = False
 
     def fullscreen(bool):
-        #global screen # pulls global screen variable from the code to use in this function
-
         if bool == True: # if the function sets fullscreen (bool) to 'True', it fullscreens the display
 
             os.environ['SDL_VIDEO_WINDOW_POS'] = "0, 0"  # sets the window to top left (default) in order to position the display correctly
             pygame.display.quit(); pygame.display.init() # stops the display and starts it again in order to save the screen position
-            display.screen = pygame.display.set_mode((0, 0))     # sets the screen size to (0, 0), which defaults it to the whole screen
-
+            display.screen = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.DOUBLEBUF)     # sets the screen size to (0, 0), which defaults it to the whole screen
+                                                                                                    # doublebuf stops flickering when display is updated with pygame.display.flip()
         else: # if fullscreen is 'False'
 
             os.environ['SDL_VIDEO_WINDOW_POS'] = "centered" # centers the window so that the non-fullscreen display starts in the middle
             pygame.display.quit(); pygame.display.init()    # stops and starts display to save
-            display.screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE)   
+            display.screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE | pygame.DOUBLEBUF)   
                 # above sets display size to smaller than fullscreen so that it can be Windowed + Resized
 
 class keybind:
-    # all functions below are if a specific key is pressed, it does the below actions
+    # functions below are for specific key interactions
     def esc():
         sim.stop()
 
@@ -39,7 +37,7 @@ class keybind:
         sim.fullscreen(display.isFullscreen)
 
 class display:
-    screen = pygame.display.set_mode((0, 0)) # sets the display value to be a variable in order to define itself correctly
+    screen = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.DOUBLEBUF) # sets the display value to be a variable in order to define itself correctly
     isFullscreen = False # inits isFullscreen variable
 
     resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
@@ -50,6 +48,10 @@ class display:
         display.resWidth, display.resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to the length and width of your moniter
         display.windowRect = display.screen.get_rect() # finds positions of different points on the display
         display.windowCenter = ((display.windowRect.left + display.windowRect.right) // 2, (display.windowRect.top + display.windowRect.bottom) // 2)
+        
+    def update():
+        if (display.isFullscreen == False):
+            pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
 
 
 
@@ -62,10 +64,12 @@ while sim.running:
     for event in pygame.event.get(): # when any event happens
         if event.type == pygame.QUIT: # pygame.QUIT = simply closing the application
             sim.stop()
+        if event.type == pygame.VIDEORESIZE:
+            display.update()
 
     display.findScreenValues()
 
-    pygame.draw.circle(display.screen, (255, 255, 255), (display.windowCenter), 5) # creates a white circle w/ radius of 5 pixels in center of screen
+    pygame.draw.circle(display.screen, (255, 255, 255), (display.windowCenter), 15) # creates a white circle w/ radius of 15 pixels in center of screen
 
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
