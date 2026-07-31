@@ -58,7 +58,6 @@ monitor_info = pygame.display.Info()
 
 resWidth, resHeight = pygame.display.get_desktop_sizes()[0]
 
-
 def draw_game():
     
     global text_surface
@@ -71,24 +70,21 @@ def draw_game():
     moniter_height = (f"mon height: {resHeight}")
     scale = (f"Scale: {(resHeight // screen.get_height())}")
     
-    text_width = font.render(width, True, (255, 255, 255))
-    text_height = font.render(height, True, (255, 255, 255))
-    text_monitor_height = font.render(moniter_height, True, (255, 255, 255))
-    text_scale = font.render(scale, True, (255, 255, 255))
+    #text_scale = font.render(scale, True, (255, 255, 255))
+    #screen.blit(text_scale, (10, 100))
     
-    screen.fill(pygame.Color('black'))
-    
-        # Clears screen with black background
-    # Draws a red rectangle with 10-pixel margin
-    pygame.draw.rect(screen, pygame.Color('red'), pygame.Rect(0,0,screen.get_width(),screen.get_height()).inflate(-10, -10))
-    pygame.draw.circle(screen, pygame.Color(0, 0, 0), (screen.get_width() // 2, screen.get_height() // 2), (50 // scalemult))
-    pygame.draw.rect(screen, pygame.Color(255, 255, 255), pygame.Rect(screen.get_width() // 2,screen.get_height() // 2, 5, 5))
-    
-    screen.blit(text_width, (10, 10))
-    screen.blit(text_height, (10, 40))
-    screen.blit(text_monitor_height, (10, 70))
-    screen.blit(text_scale, (10, 100))
-    
+    screen.fill((50, 50, 50))
+
+    # Draw vertical lines every 40 pixels
+    # start, stop, step
+    for x in range(0, screen.get_width(), 40):
+        # pygame.draw.line(surface, color, start_pos, end_pos, width)
+        pygame.draw.line(screen, (255, 255, 255), (x, 0), (x, resHeight), 1)
+    for x in range(0, screen.get_height(), 40):
+        # pygame.draw.line(surface, color, start_pos, end_pos, width)
+        pygame.draw.line(screen, (255, 255, 255), (0, x), (resWidth, x), 1)
+
+
     # Updates the display to show the drawn content
     pygame.display.flip()
 

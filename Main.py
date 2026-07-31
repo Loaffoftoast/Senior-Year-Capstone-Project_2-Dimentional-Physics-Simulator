@@ -27,6 +27,23 @@ class sim:
             display.screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE | pygame.DOUBLEBUF)   
                 # above sets display size to smaller than fullscreen so that it can be Windowed + Resized
 
+    def drawGrid():
+
+        for x in range(display.windowXCenter, display.windowRect.right, 40):
+            pygame.draw.line(display.screen, (50, 50, 50), (x, 0), (x, display.resHeight), 1)
+
+        for x in range(display.windowXCenter, display.windowRect.left, -40): 
+            pygame.draw.line(display.screen, (50, 50, 50), (x, 0), (x, display.resHeight), 1)
+
+        for y in range(display.windowYCenter, display.windowRect.top, -40):
+            pygame.draw.line(display.screen, (50, 50, 50), (0, y), (display.resWidth, y), 1)
+
+        for y in range(display.windowYCenter, display.windowRect.bottom, 40):
+            pygame.draw.line(display.screen, (50, 50, 50), (0, y), (display.resWidth, y), 1)
+                
+        pygame.draw.line(display.screen, (255, 255, 255), (display.windowXCenter, 0), (display.windowXCenter, display.resHeight), 2)
+        pygame.draw.line(display.screen, (255, 255, 255), (0, display.windowYCenter), (display.resWidth, display.windowYCenter), 2)
+
 class keybind:
     # functions below are for specific key interactions
     def esc():
@@ -43,16 +60,19 @@ class display:
     resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
     windowRect = screen.get_rect()
     windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
+    windowXCenter = ((windowRect.left + windowRect.right) // 2)
+    windowYCenter = ((windowRect.top + windowRect.bottom) // 2)
 
     def findScreenValues():
         display.resWidth, display.resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to the length and width of your moniter
         display.windowRect = display.screen.get_rect() # finds positions of different points on the display
         display.windowCenter = ((display.windowRect.left + display.windowRect.right) // 2, (display.windowRect.top + display.windowRect.bottom) // 2)
+        display.windowXCenter = ((display.windowRect.left + display.windowRect.right) // 2)
+        display.windowYCenter = ((display.windowRect.top + display.windowRect.bottom) // 2)
         
     def update():
         if (display.isFullscreen == False):
             pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-
 
 
 # due to the previous comments on functions, I hope below code can be inferred only by looking back at functions (with a few exceptions)
@@ -68,8 +88,7 @@ while sim.running:
             display.update()
 
     display.findScreenValues()
-
-    pygame.draw.circle(display.screen, (255, 255, 255), (display.windowCenter), 15) # creates a white circle w/ radius of 15 pixels in center of screen
+    sim.drawGrid()
 
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE:
