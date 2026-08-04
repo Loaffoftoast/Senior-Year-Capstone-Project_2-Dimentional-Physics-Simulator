@@ -30,6 +30,7 @@ def drawGrid():
         pygame.draw.line(screen, (50, 50, 50), ((windowXCenter + (i * zoomLevel)), 0), ((windowXCenter + (i * zoomLevel)), resHeight), 1)
         pygame.draw.line(screen, (50, 50, 50), (0, (windowYCenter + (i * zoomLevel))), (resWidth, (windowYCenter + (i * zoomLevel))), 1)
         pygame.draw.line(screen, (50, 50, 50), (0, (windowYCenter - (i * zoomLevel))), (resWidth, (windowYCenter - (i * zoomLevel))), 1)
+        pygame.draw.circle(screen, (250, 250, 250), (windowXCenter, windowYCenter + i), 5, 1)
         
         if i > 250*40: break
 
@@ -50,10 +51,10 @@ while running:
         
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_UP and pressed == False:  # Scroll Up
-            zoomLevel = zoomLevel + zoomFactor
+            zoomLevel = zoomLevel * 1.1
             pressed = True
         elif event.key == pygame.K_DOWN and pressed == False:  # Scroll Down
-            zoomLevel = zoomLevel - zoomFactor
+            zoomLevel = zoomLevel * 0.9
             pressed = True
     if not event.type == pygame.KEYDOWN:
         pressed = False
