@@ -7,7 +7,8 @@ import sys
 pygame.init()
 
 screen = pygame.display.set_mode((800, 500), pygame.RESIZABLE)
-pygame.display.set_caption("Vertical Lines Every 40 Pixels")
+pygame.display.set_caption("Coordinate Grid")
+clock = pygame.time.Clock()
 
 font = pygame.font.SysFont("Arial", 12)
 
@@ -15,6 +16,10 @@ resWidth, resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to
 windowRect = screen.get_rect() # finds positions of different points on the display
 windowXCenter = ((windowRect.left + windowRect.right) // 2)
 windowYCenter = ((windowRect.top + windowRect.bottom) // 2)
+
+gridZoomCount = 2
+currInterval = 2
+prevInterval = 1
 
 zoomLevel = 1
 zoomFactor = 0.1
@@ -24,13 +29,21 @@ pressed = False
 xMax = 0
 
 def drawGrid():
- 
     for i in count(0, 40):
         pygame.draw.line(screen, (50, 50, 50), ((windowXCenter - (i * zoomLevel)), 0), ((windowXCenter - (i * zoomLevel)), resHeight), 1)
         pygame.draw.line(screen, (50, 50, 50), ((windowXCenter + (i * zoomLevel)), 0), ((windowXCenter + (i * zoomLevel)), resHeight), 1)
         pygame.draw.line(screen, (50, 50, 50), (0, (windowYCenter + (i * zoomLevel))), (resWidth, (windowYCenter + (i * zoomLevel))), 1)
         pygame.draw.line(screen, (50, 50, 50), (0, (windowYCenter - (i * zoomLevel))), (resWidth, (windowYCenter - (i * zoomLevel))), 1)
-        pygame.draw.circle(screen, (250, 250, 250), (windowXCenter, windowYCenter + i), 5, 1)
+        if gridZoomCount % 3 == 0:
+            pygame.draw.line(screen, (100, 100, 100), ((windowXCenter - (i * zoomLevel)) * 5, 0), ((windowXCenter - (i * zoomLevel)) * 5, resHeight), 1)
+            pygame.draw.line(screen, (100, 100, 100), ((windowXCenter + (i * zoomLevel)) * 5, 0), ((windowXCenter + (i * zoomLevel)) * 5, resHeight), 1)
+            pygame.draw.line(screen, (100, 100, 100), (0, (windowYCenter + (i * zoomLevel)) * 5), (resWidth, (windowYCenter + (i * zoomLevel)) * 5), 1)
+            pygame.draw.line(screen, (100, 100, 100), (0, (windowYCenter - (i * zoomLevel)) * 5), (resWidth, (windowYCenter - (i * zoomLevel)) * 5), 1)
+        else:
+            pygame.draw.line(screen, (100, 100, 100), ((windowXCenter - (i * zoomLevel)), 0), ((windowXCenter - (i * zoomLevel)), resHeight), 1)
+            pygame.draw.line(screen, (100, 100, 100), ((windowXCenter + (i * zoomLevel)), 0), ((windowXCenter + (i * zoomLevel)), resHeight), 1)
+            pygame.draw.line(screen, (100, 100, 100), (0, (windowYCenter + (i * zoomLevel))), (resWidth, (windowYCenter + (i * zoomLevel))), 1)
+            pygame.draw.line(screen, (100, 100, 100), (0, (windowYCenter - (i * zoomLevel))), (resWidth, (windowYCenter - (i * zoomLevel))), 1)
         
         if i > 250*40: break
 
