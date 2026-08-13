@@ -7,6 +7,7 @@ pygame.init() #Runs all the code below
 
 class display:
     screen = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.DOUBLEBUF) # sets the display value to be a variable in order to define itself correctly
+    clock = pygame.time.Clock()
     isFullscreen = False # inits isFullscreen variable
 
     resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
@@ -92,7 +93,6 @@ class sim:
                     zoomLevel = 1.9
                     currentInterval = currentInterval * 2
         
-        
         def drawGrid():
             zoomLevel = sim.graph.zoomLevel
             currentInterval = sim.graph.currentInterval
@@ -139,6 +139,12 @@ class sim:
             
 class keybind:
     # functions below are for specific key interactions
+    keyPressed = pygame.key.get_pressed
+
+    def getKeyPressed():
+        keybind.keyPressed = pygame.key.get_pressed()
+        keybind.mousePressed = pygame.mouse.get_pressed()
+        
     def esc():
         sim.stop()
 
@@ -164,17 +170,17 @@ class keybind:
             sim.centerX, sim.centerY = (sim.lastCenterX + mouseXOffset), (sim.lastCenterY + mouseYOffset)
     
     zoomBindPressed = False
-    zoomBindValue = 0
-    def zoom(zoomValue):
-        if zoomValue == 1 and keybind.zoomBindPressed == False: 
-            sim.graph.zoomIn() 
-            keybind.zoomBindPressed = True
-        if zoomValue == -1 and keybind.zoomBindPressed == False: 
-            sim.graph.zoomOut()
-        keybind.zoomBindPressed = True
-        if zoomValue == 0: keybind.zoomBindPressed == False
     
-
+    def up(): sim.graph.zoomIn()
+            
+    def down(): sim.graph.zoomOut()
+        
+    scrollWheelY = 0
+    
+    def scrollWheelUp(): sim.graph.zoomIn()
+            
+    def scrollWheelDown(): sim.graph.zoomOut()
+        
 
 # due to the previous comments on functions, I hope below code can be inferred only by looking back at functions (with a few exceptions)
 
@@ -191,33 +197,55 @@ while sim.running:
     display.findScreenValues()
     display.screen.fill((0, 0, 0))
 
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_ESCAPE: keybind.esc()
+    keybind.getKeyPressed()
 
-        if event.key == pygame.K_F11: keybind.F11()
-            
-        if event.key == pygame.K_UP and keybind.zoomBindPressed == False: keybind.zoom(1)
-        elif event.key == pygame.K_DOWN and keybind.zoomBindPressed == False: keybind.zoom(1)
-    
-    zoomBindValue = 0
-    if event.type == pygame.MOUSEWHEEL:
-        keybind.zoomBindValue = event.y
+    if keybind.keyPressed[pygame.K_ESCAPE]: keybind.esc()
+
+    if keybind.keyPressed[pygame.K_F11]: keybind.F11()
         
-    keybind.zoom(keybind.zoomBindValue)
+    if keybind.keyPressed[pygame.K_UP] and keybind.zoomBindPressed == False: 
+        keybind.up()
+        keybind.zoomBindPressed = True
+        
+    if keybind.keyPressed[pygame.K_DOWN] and keybind.zoomBindPressed == False: 
+        keybind.down()
+        keybind.zoomBindPressed = True
+        
+    if not keybind.keyPressed[pygame.K_UP] and not keybind.keyPressed[pygame.K_DOWN]:
+        keybind.zoomBindPressed = False
+        
+    #this wont work it always says zoombindpressed is false :(
+    #'''
+    keybind.scrollWheelY = 0
+    if event.type == pygame.MOUSEWHEEL:
+        keybind.scrollWheelY = event.y
+        
+    if keybind.scrollWheelY == 1 and keybind.zoomBindPressed == False:
+        #keybind.scrollWheelUp()
+        keybind.zoomBindPressed = True
+        
+    if keybind.scrollWheelY == -1 and keybind.zoomBindPressed == False:
+        #keybind.scrollWheelDown
+        keybind.zoomBindPressed = True
+            
+    if keybind.scrollWheelY == 0:
+        keybind.zoomBindPressed = False
+    #'''
     
-    
-    if event.type == pygame.MOUSEBUTTONDOWN:
+    if keybind.mousePressed[pygame.MOUSEBUTTONDOWN]:
         if event.button == 3: keybind.rightClickDown()
         
-    elif event.type == pygame.MOUSEBUTTONUP:
+    elif keybind.mousePressed[pygame.MOUSEBUTTONDOWN]:
         if event.button == 3: keybind.rightClickUp()
         
+        #this no longer working pls fix
     elif event.type == pygame.MOUSEMOTION: keybind.mouseMovement()
     
         
             
-    print(keybind.zoomBindValue, sim.graph.intervalCount, sim.graph.zoomLevel, sim.graph.currentInterval, keybind.zoomBindPressed, (int(str(abs(sim.graph.currentInterval)).replace('.', '').lstrip('0')[0])))
+    print(keybind.scrollWheel, sim.graph.intervalCount, sim.graph.zoomLevel, sim.graph.currentInterval, keybind.zoomBindPressed, (int(str(abs(sim.graph.currentInterval)).replace('.', '').lstrip('0')[0])))
             
     pygame.display.flip() # updates the entire contents of the display with whatever drawn in code
+    display.clock.tick(60)
 
 pygame.quit()
