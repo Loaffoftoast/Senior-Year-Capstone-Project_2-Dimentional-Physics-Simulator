@@ -13,15 +13,15 @@ class display:
     resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
     windowRect = screen.get_rect()
     windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
-    windowXCenter = ((windowRect.left + windowRect.right) // 2)
-    windowYCenter = ((windowRect.top + windowRect.bottom) // 2)
+    windowCenterX = ((windowRect.left + windowRect.right) // 2)
+    windowCenterY = ((windowRect.top + windowRect.bottom) // 2)
 
     def findScreenValues():
         display.resWidth, display.resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to the length and width of your moniter
         display.windowRect = display.screen.get_rect() # finds positions of different points on the display
         display.windowCenter = ((display.windowRect.left + display.windowRect.right) // 2, (display.windowRect.top + display.windowRect.bottom) // 2)
-        display.windowXCenter = ((display.windowRect.left + display.windowRect.right) // 2)
-        display.windowYCenter = ((display.windowRect.top + display.windowRect.bottom) // 2)
+        display.windowCenterX = ((display.windowRect.left + display.windowRect.right) // 2)
+        display.windowCenterY = ((display.windowRect.top + display.windowRect.bottom) // 2)
         
     def update():
         if (display.isFullscreen == False):
@@ -31,8 +31,8 @@ class sim:
     running = False #running is the variable used to see if the loop is active
     centerX, centerY = display.windowCenter
     lastCenterX, lastCenterY = centerX, centerY
-    mouseXPos, mouseYPos = pygame.mouse.get_pos()
-    lastMouseX, lastMouseY = mouseXPos, mouseYPos
+    mousePosX, mousePosY = pygame.mouse.get_pos()
+    lastMouseX, lastMouseY = mousePosX, mousePosY
     
     def start():    #start function begins the loop
         sim.running = True
@@ -91,7 +91,7 @@ class sim:
             zoomLevel = sim.graph.zoomLevel
             currentInterval = sim.graph.currentInterval
             screen = display.screen
-            windowXCenter, windowYCenter = display.windowXCenter, display.windowYCenter
+            windowCenterX, windowCenterY = display.windowCenterX, display.windowCenterY
             resWidth, resHeight = display.resWidth, display.resHeight
             gridInterval = int(str(abs(currentInterval)).replace('.', '').lstrip('0')[0])
                 
@@ -149,18 +149,18 @@ class keybind:
     dragging = False
     
     def rightClickDown():
-        mouseXPos, mouseYPos = pygame.mouse.get_pos()
+        sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
         sim.lastCenterX, sim.lastCenterY = sim.centerX, sim.centerY
-        sim.lastMouseX, sim.lastMouseY = mouseXPos, mouseYPos
+        sim.lastMouseX, sim.lastMouseY = sim.mousePosX, sim.mousePosY
         keybind.dragging = True
 
     def rightClickUp(): 
         keybind.dragging = False
         
     def mouseMovement():
-        if keybind.dragging == True:
-            mouseXPos, mouseYPos = pygame.mouse.get_pos()
-            mouseXOffset, mouseYOffset = (mouseXPos - sim.lastMouseX), (mouseYPos - sim.lastMouseY)
+        if keybind.dragging:
+            sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
+            mouseXOffset, mouseYOffset = (sim.mousePosX - sim.lastMouseX), (sim.mousePosY - sim.lastMouseY)
             sim.centerX, sim.centerY = (sim.lastCenterX + mouseXOffset), (sim.lastCenterY + mouseYOffset)
     
     upPressed = False            
@@ -186,11 +186,12 @@ while sim.running:
     display.findScreenValues()
     display.screen.fill((0, 0, 0))
 
+
     keybind.getKeyPressed()
 
     if keybind.keyPressed[pygame.K_ESCAPE]: keybind.esc()
-
     if keybind.keyPressed[pygame.K_F11]: keybind.F11()
+        
         
     if keybind.keyPressed[pygame.K_UP] and keybind.upPressed == False:
         sim.graph.zoomIn()
@@ -204,8 +205,7 @@ while sim.running:
         keybind.upPressed = False
         keybind.downPressed = False
         
-    #this wont work it always says zoombindpressed is false :(
-    #'''
+        
     keybind.scrollWheelY = 0
     if event.type == pygame.MOUSEWHEEL:
         keybind.scrollWheelY = event.y
@@ -220,21 +220,22 @@ while sim.running:
             
     if keybind.scrollWheelY == 0:
         keybind.scrollWheelMoving = False
-    #'''
-    
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        if event.button == 3: keybind.rightClickDown() 
-        
-    if event.type == pygame.MOUSEBUTTONUP:
-        if event.button == 3: keybind.rightClickUp() 
-        
-        #this no longer working pls fix
-    if event.type == pygame.MOUSEMOTION: keybind.mouseMovement()
-    
-        
+
+
+
+    elif event.type == pygame.MOUSEBUTTONDOWN:
+        if event.button == 3:
+            keybind.rightClickDown()
+
+    elif event.type == pygame.MOUSEBUTTONUP:
+        if event.button == 3:
+            keybind.rightClickUp()
+
+    elif event.type == pygame.MOUSEMOTION:
+        keybind.mouseMovement()
             
-    print(sim.graph.intervalCount, sim.graph.zoomLevel, sim.graph.currentInterval, keybind.upPressed, keybind.downPressed, keybind.scrollWheelMoving, (int(str(abs(sim.graph.currentInterval)).replace('.', '').lstrip('0')[0])))
-            
+    print(keybind.dragging)
+     
     sim.graph.drawGraph()
     pygame.display.flip() # updates the entire contents of the display with whatever drawn in code
     display.clock.tick(60)
