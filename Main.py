@@ -30,9 +30,11 @@ class display:
 class sim:
     running = False #running is the variable used to see if the loop is active
     centerX, centerY = display.windowCenter
-    lastCenterX, lastCenterY = centerX, centerY
     mousePosX, mousePosY = pygame.mouse.get_pos()
+    lastCenterX, lastCenterY = centerX, centerY
     lastMouseX, lastMouseY = mousePosX, mousePosY
+    mouseOffsetX, mouseOffsetY = (mousePosX - lastMouseX), (mousePosY - lastMouseY)
+
     
     def start():    #start function begins the loop
         sim.running = True
@@ -91,17 +93,17 @@ class sim:
             zoomLevel = sim.graph.zoomLevel
             currentInterval = sim.graph.currentInterval
             screen = display.screen
-            windowCenterX, windowCenterY = display.windowCenterX, display.windowCenterY
             resWidth, resHeight = display.resWidth, display.resHeight
             gridInterval = int(str(abs(currentInterval)).replace('.', '').lstrip('0')[0])
                 
+# TURN THIS INTO A RANGE FOR YOUR SCREEN
             if gridInterval == 5:
                 for i in itertools.count(0, 16 * zoomLevel):
                     pygame.draw.line(screen, (50, 50, 50), ((sim.centerX - i), 0), ((sim.centerX - i), resHeight), 1)
                     pygame.draw.line(screen, (50, 50, 50), ((sim.centerX + i), 0), ((sim.centerX + i), resHeight), 1)
                     pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY + i)), (resWidth, (sim.centerY + i)), 1)
                     pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY - i)), (resWidth, (sim.centerY - i)), 1)
-                    if i > 2500: break
+                    if i > 1000 * 8: break
                 
             elif gridInterval == 1 or gridInterval == 2:
                 for i in itertools.count(0, 20 * zoomLevel):
@@ -109,7 +111,7 @@ class sim:
                     pygame.draw.line(screen, (50, 50, 50), ((sim.centerX + i), 0), ((sim.centerX + i), resHeight), 1)
                     pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY + i)), (resWidth, (sim.centerY + i)), 1)
                     pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY - i)), (resWidth, (sim.centerY - i)), 1)
-                    if i > 2500: break
+                    if i > 1000 * 8: break
 
             for i in itertools.count(0, 80 * zoomLevel):
                 pygame.draw.line(screen, (100, 100, 100), ((sim.centerX - i), 0), ((sim.centerX - i), resHeight), 1)
@@ -126,18 +128,57 @@ class sim:
                     screen.blit(font.render(posCoords, True, (200, 200, 200)), (sim.centerX + 4, sim.centerY - i + 2))
                     screen.blit(font.render(negCoords, True, (200, 200, 200)), (sim.centerX + 4, sim.centerY + i + 2))
 
-                if i > 2500: break
+                if i > 1000 * 8: break
 
             pygame.draw.line(screen, (200, 200, 200), (sim.centerX, 0), (sim.centerX, resHeight), 2)
             pygame.draw.line(screen, (200, 200, 200), (0, sim.centerY), (resWidth, sim.centerY), 2)
             
+            '''
+            if gridInterval == 5:
+                for i in itertools.count(0, 16 * zoomLevel):
+                    pygame.draw.line(screen, (50, 50, 50), ((sim.centerX - i), 0), ((sim.centerX - i), resHeight), 1)
+                    pygame.draw.line(screen, (50, 50, 50), ((sim.centerX + i), 0), ((sim.centerX + i), resHeight), 1)
+                    pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY + i)), (resWidth, (sim.centerY + i)), 1)
+                    pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY - i)), (resWidth, (sim.centerY - i)), 1)
+                    if i > 1000 * 8: break
+                
+            elif gridInterval == 1 or gridInterval == 2:
+                for i in itertools.count(0, 20 * zoomLevel):
+                    pygame.draw.line(screen, (50, 50, 50), ((sim.centerX - i), 0), ((sim.centerX - i), resHeight), 1)
+                    pygame.draw.line(screen, (50, 50, 50), ((sim.centerX + i), 0), ((sim.centerX + i), resHeight), 1)
+                    pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY + i)), (resWidth, (sim.centerY + i)), 1)
+                    pygame.draw.line(screen, (50, 50, 50), (0, (sim.centerY - i)), (resWidth, (sim.centerY - i)), 1)
+                    if i > 1000 * 8: break
+
+            for i in itertools.count(0, 80 * zoomLevel):
+                pygame.draw.line(screen, (100, 100, 100), ((sim.centerX - i), 0), ((sim.centerX - i), resHeight), 1)
+                pygame.draw.line(screen, (100, 100, 100), ((sim.centerX + i), 0), ((sim.centerX + i), resHeight), 1)
+                pygame.draw.line(screen, (100, 100, 100), (0, (sim.centerY + i)), (resWidth, (sim.centerY + i)), 1)
+                pygame.draw.line(screen, (100, 100, 100), (0, (sim.centerY - i)), (resWidth, (sim.centerY - i)), 1)
+
+                font = pygame.font.SysFont("Arial", 15)
+                if i > 0:
+                    coord = currentInterval * i / (80 * zoomLevel)
+                    posCoords, negCoords = f"{coord:g}", f"{-coord:g}"
+                    screen.blit(font.render(negCoords, True, (200, 200, 200)), (sim.centerX - i + 2, sim.centerY + 2))
+                    screen.blit(font.render(posCoords, True, (200, 200, 200)), (sim.centerX + i + 2, sim.centerY + 2))
+                    screen.blit(font.render(posCoords, True, (200, 200, 200)), (sim.centerX + 4, sim.centerY - i + 2))
+                    screen.blit(font.render(negCoords, True, (200, 200, 200)), (sim.centerX + 4, sim.centerY + i + 2))
+
+                if i > 1000 * 8: break
+
+            pygame.draw.line(screen, (200, 200, 200), (sim.centerX, 0), (sim.centerX, resHeight), 2)
+            pygame.draw.line(screen, (200, 200, 200), (0, sim.centerY), (resWidth, sim.centerY), 2)
+            '''
+            
 class keybind:
     # functions below are for specific key interactions
     keyPressed = pygame.key.get_pressed
+    mouseButton = pygame.mouse.get_pressed() 
 
     def getKeyPressed():
         keybind.keyPressed = pygame.key.get_pressed()
-        keybind.mousePressed = pygame.mouse.get_pressed()
+        keybind.mouseButton = pygame.mouse.get_pressed() 
         
     def esc():
         sim.stop()
@@ -148,11 +189,14 @@ class keybind:
         
     dragging = False
     
+    def mouseUpdate ():
+        sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
+    
     def rightClickDown():
         sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
-        sim.lastCenterX, sim.lastCenterY = sim.centerX, sim.centerY
-        sim.lastMouseX, sim.lastMouseY = sim.mousePosX, sim.mousePosY
-        keybind.dragging = True
+        if keybind.dragging == False:
+            sim.lastCenterX, sim.lastCenterY = sim.centerX, sim.centerY
+            sim.lastMouseX, sim.lastMouseY = sim.mousePosX, sim.mousePosY
 
     def rightClickUp(): 
         keybind.dragging = False
@@ -160,8 +204,9 @@ class keybind:
     def mouseMovement():
         if keybind.dragging:
             sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
-            mouseXOffset, mouseYOffset = (sim.mousePosX - sim.lastMouseX), (sim.mousePosY - sim.lastMouseY)
-            sim.centerX, sim.centerY = (sim.lastCenterX + mouseXOffset), (sim.lastCenterY + mouseYOffset)
+            sim.mouseOffsetX, sim.mouseOffsetY = (sim.mousePosX - sim.lastMouseX), (sim.mousePosY - sim.lastMouseY)
+
+            sim.centerX, sim.centerY = (sim.lastCenterX + sim.mouseOffsetX), (sim.lastCenterY + sim.mouseOffsetY)
     
     upPressed = False            
     downPressed = False
@@ -222,20 +267,51 @@ while sim.running:
         keybind.scrollWheelMoving = False
 
 
-
-    elif event.type == pygame.MOUSEBUTTONDOWN:
-        if event.button == 3:
-            keybind.rightClickDown()
-
-    elif event.type == pygame.MOUSEBUTTONUP:
-        if event.button == 3:
-            keybind.rightClickUp()
-
-    elif event.type == pygame.MOUSEMOTION:
+    #'''
+    if keybind.mouseButton[2]:
+        keybind.rightClickDown()
+        keybind.dragging = True
+    
+    if not keybind.mouseButton[2]:
+        keybind.dragging = False
+        keybind.rightClickUp()
+        
+    if keybind.dragging == True:
         keybind.mouseMovement()
+        
+    #if event.type == pygame.MOUSEBUTTONUP:
+    #    if event.button == 3:
+    #        keybind.dragging = False
+    #        keybind.rightClickUp()
+
+    #if event.type == pygame.MOUSEMOTION:
+    #    if keybind.dragging == True: keybind.mouseMovement()
+        
+    '''
+    
+    keybind.mouseUpdate()
             
-    print(keybind.dragging)
-     
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.button == 3:
+            sim.lastCenterX, sim.lastCenterY = sim.centerX, sim.centerY
+            sim.lastMouseX, sim.lastMouseY = sim.mousePosX, sim.mousePosY
+            keybind.dragging = True
+
+    if event.type == pygame.MOUSEBUTTONUP:
+        if event.button == 3:
+            keybind.dragging = False
+
+    if event.type == pygame.MOUSEMOTION:
+        if keybind.dragging:
+            sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
+            sim.mouseOffsetX, sim.mouseOffsetY = (sim.mousePosX - sim.lastMouseX), (sim.mousePosY - sim.lastMouseY)
+            sim.centerX, sim.centerY = (sim.lastCenterX + sim.lastMouseX), (sim.lastCenterY + sim.lastMouseY)
+            
+    '''
+            
+            
+    print(keybind.dragging, sim.centerX, sim.centerY)
+    
     sim.graph.drawGraph()
     pygame.display.flip() # updates the entire contents of the display with whatever drawn in code
     display.clock.tick(60)
