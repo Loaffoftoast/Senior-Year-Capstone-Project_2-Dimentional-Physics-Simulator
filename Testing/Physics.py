@@ -1,6 +1,10 @@
 import pygame
 import sys
 
+pygame.init()
+screen = pygame.display.set_mode((500, 500))
+BACKGROUND = (0, 0, 0)
+
 class physics:
 
     distance = 0
