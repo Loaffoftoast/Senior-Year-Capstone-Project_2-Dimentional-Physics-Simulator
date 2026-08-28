@@ -8,16 +8,21 @@ from Library.Sim import sim
 
 from Library.Display import display
 
+from Library.Graph import graph
+
 
 
 class keybind:
-    # functions below are for specific key interactions
-    keyPressed = pygame.key.get_pressed
-    mouseButton = pygame.mouse.get_pressed() 
+    def runKeyPressed(keyPressed):
+        if keyPressed[pygame.K_ESCAPE]: keybind.esc()
+        if keyPressed[pygame.K_F11]: keybind.F11()
+        if keyPressed[pygame.K_UP]: keybind.up()
+        
 
-    def getKeyPressed():
-        keybind.keyPressed = pygame.key.get_pressed()
         keybind.mouseButton = pygame.mouse.get_pressed() 
+
+
+        
         
     def esc():
         sim.stop()
@@ -26,9 +31,14 @@ class keybind:
         display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
         sim.fullscreen(display.isFullscreen)
         
+    def up():
+        if keybind.upPressed == False:
+            graph.zoomIn()
+            keybind.upPressed = True
+    
     dragging = False
     
-    def mouseUpdate ():
+    def mouseUpdate():
         sim.mousePosX, sim.mousePosY = pygame.mouse.get_pos()
     
     def rightClickDown():

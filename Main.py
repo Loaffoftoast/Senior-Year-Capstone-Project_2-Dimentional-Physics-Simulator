@@ -1,5 +1,11 @@
 # https://www.pygame.org/docs/genindex.html
 import os
+import sys
+
+# Ensure both the project root and Library are available for the package imports.
+projectRoot = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, projectRoot)
+sys.path.insert(0, os.path.join(projectRoot, "Library"))
 
 import pygame
 
@@ -35,16 +41,13 @@ while sim.running:
     display.findScreenValues()
     display.screen.fill((20, 20, 20))
 
-
-    keybind.getKeyPressed()
-
-    if keybind.keyPressed[pygame.K_ESCAPE]: keybind.esc()
-    if keybind.keyPressed[pygame.K_F11]: keybind.F11()
+    keyPressed = pygame.key.get_pressed()
+    keybind.runKeyPressed(keyPressed)
         
         
-    if keybind.keyPressed[pygame.K_UP] and keybind.upPressed == False:
+    '''    if keybind.keyPressed[pygame.K_UP] and keybind.upPressed == False:
         graph.zoomIn()
-        keybind.upPressed = True
+        keybind.upPressed = True'''
         
     if keybind.keyPressed[pygame.K_DOWN] and keybind.downPressed == False: 
         graph.zoomOut()
