@@ -18,6 +18,8 @@ from Library.Sim import sim
 from Library.Graph import graph
             
 from Library.Keybinds import keybind
+
+from Library.Mouse import mouse
         
         
         
@@ -41,36 +43,11 @@ while sim.running:
     display.findScreenValues()
     display.screen.fill((20, 20, 20))
 
-    keyPressed = pygame.key.get_pressed()
-    keybind.runKeyPressed(keyPressed)
-        
-        
-    '''    if keybind.keyPressed[pygame.K_UP] and keybind.upPressed == False:
-        graph.zoomIn()
-        keybind.upPressed = True'''
-        
-    if keybind.keyPressed[pygame.K_DOWN] and keybind.downPressed == False: 
-        graph.zoomOut()
-        keybind.downPressed = True
-        
-    if not keybind.keyPressed[pygame.K_UP] and not keybind.keyPressed[pygame.K_DOWN]:
-        keybind.upPressed = False
-        keybind.downPressed = False
-        
-        
-    if keybind.mouseButton[2]:
-        keybind.rightClickDown()
-        keybind.dragging = True
-    
-    if not keybind.mouseButton[2]:
-        keybind.dragging = False
-        keybind.rightClickUp()
-        
-    if keybind.dragging == True:
-        keybind.mouseMovement()
+    keybind.getPressed(pygame.key.get_pressed())
+    mouse.getInput(pygame.mouse.get_pressed())
+    mouse.getPos()
             
-            
-    print(sim.centerX, sim.centerY)
+    #print(sim.centerX, sim.centerY)
     
     fps = int(display.clock.get_fps())
     fpsFont = pygame.font.SysFont("Arial", 15)
