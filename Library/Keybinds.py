@@ -26,7 +26,7 @@ class keybind:
 
         if keyPressed[pygame.K_UP]: 
             if keybind.upPressed == False:
-                graph.zoomIn()
+                graph.zoomIn(0.1)
                 keybind.upPressed = True
 
         elif not keyPressed[pygame.K_UP]: 
@@ -34,12 +34,8 @@ class keybind:
 
         if keyPressed[pygame.K_DOWN]: 
             if keybind.downPressed == False:
-                graph.zoomOut()
+                graph.zoomOut(0.1)
                 keybind.downPressed = True
 
         elif not keyPressed[pygame.K_DOWN]: 
             keybind.downPressed = False
-        
-        
-    #scrollWheelY = 0
-    #scrollWheelMoving = False

@@ -16,8 +16,8 @@ class graph:
         currentInterval = 2
         intervalCount = 1
         
-        def zoomIn():
-            graph.zoomLevel = graph.zoomLevel + 0.1
+        def zoomIn(zoomInterval):
+            graph.zoomLevel = graph.zoomLevel + zoomInterval
             
             if (graph.intervalCount) % 3 == 0:
                 if graph.zoomLevel >= 2.5:
@@ -29,8 +29,8 @@ class graph:
                 graph.zoomLevel = 1
                 graph.intervalCount = graph.intervalCount + 1
 
-        def zoomOut():
-            graph.zoomLevel = graph.zoomLevel - 0.1
+        def zoomOut(zoomInterval):
+            graph.zoomLevel = graph.zoomLevel - zoomInterval
 
             if graph.zoomLevel < 1:
                 graph.intervalCount = graph.intervalCount - 1
@@ -52,9 +52,9 @@ class graph:
                 
 # TURN THIS INTO A RANGE FOR YOUR SCREEN
             def drawGrid(spacing, color):
-                xLines = range(-int(sim.centerX / spacing) - 1,
+                xLines = range(-int(sim.centerX / spacing),
                                int((resWidth - sim.centerX) / spacing) + 2)
-                yLines = range(-int(sim.centerY / spacing) - 1,
+                yLines = range(-int(sim.centerY / spacing),
                                int((resHeight - sim.centerY) / spacing) + 2)
                 for step in xLines:
                     x = sim.centerX + step * spacing
@@ -69,9 +69,9 @@ class graph:
                 drawGrid(20 * zoomLevel, (50, 50, 50))
 
             spacing = 80 * zoomLevel
-            xLines = range(-int(sim.centerX / spacing) - 1,
+            xLines = range(-int(sim.centerX / spacing),
                            int((resWidth - sim.centerX) / spacing) + 2)
-            yLines = range(-int(sim.centerY / spacing) - 1,
+            yLines = range(-int(sim.centerY / spacing),
                            int((resHeight - sim.centerY) / spacing) + 2)
             for step in xLines:
                 i = step * spacing

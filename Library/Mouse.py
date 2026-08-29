@@ -48,3 +48,9 @@ class mouse:
     offsetX, offsetY = (posX - lastPosX), (posX - lastPosY)
     def getOffset():
         mouse.offsetX, mouse.offsetY = (mouse.posX - mouse.lastPosX), (mouse.posY - mouse.lastPosY)
+
+    def scrollWheel(scrollY):
+        if scrollY > 0:
+            graph.zoomIn(0.035)
+        elif scrollY < 0:
+            graph.zoomOut(0.035)
