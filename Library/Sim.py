@@ -12,15 +12,16 @@ from Library.Display import display
 
 class sim:
     running = False #running is the variable used to see if the loop is active
-    centerX, centerY = display.windowCenter
+    centerX, centerY = display.centerPos
     lastCenterX, lastCenterY = centerX, centerY
     
     def start():    #start function begins the loop
         sim.running = True
         pygame.display.set_caption("Physics Simulation Senior Project - Alex LD")
+
         window_handle = pygame.display.get_wm_info()["window"]
         pywinstyles.change_header_color(window_handle, color="#000000FF") # Hex color code
-        pywinstyles.change_title_color(window_handle, color="#BD7878")  # Text color
+        pywinstyles.change_title_color(window_handle, color="#FF0000")  # Text color
 
 
     def stop(): #stop ends the loop

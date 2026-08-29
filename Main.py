@@ -34,7 +34,7 @@ while sim.running:
     for event in pygame.event.get(): # when any event happens
         events.runEvent(event)
 
-    display.findScreenValues()
+    display.getScreenValues()
     display.screen.fill((20, 20, 20))
 
     keybind.getPressed(pygame.key.get_pressed())
@@ -43,7 +43,7 @@ while sim.running:
                 
     fps = int(display.clock.get_fps())
     fpsFont = pygame.font.SysFont("Arial", 15)
-    display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 0)), (10, 10))
+    display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
     
     
     graph.drawGraph()

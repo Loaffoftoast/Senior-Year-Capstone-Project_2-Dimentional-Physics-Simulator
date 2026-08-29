@@ -17,25 +17,19 @@ class display:
     
     windowRect = screen.get_rect()
     
-    windowCenter = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
+    centerPos = ((windowRect.left + windowRect.right) // 2, (windowRect.top + windowRect.bottom) // 2)
     
-    windowCenterX = ((windowRect.left + windowRect.right) // 2)
-    
-    windowCenterY = ((windowRect.top + windowRect.bottom) // 2)
+    centerPosX, centerPosY = centerPos
 
-
-
-    def findScreenValues():
+    def getScreenValues():
         display.resWidth, display.resHeight = pygame.display.get_desktop_sizes()[0] # sets a variable to the length and width of your moniter
         
         display.windowRect = display.screen.get_rect() # finds positions of different points on the display
         
-        display.windowCenter = ((display.windowRect.left + display.windowRect.right) // 2, 
+        display.centerPos = ((display.windowRect.left + display.windowRect.right) // 2, 
                                 (display.windowRect.top + display.windowRect.bottom) // 2)
         
-        display.windowCenterX = ((display.windowRect.left + display.windowRect.right) // 2)
-        
-        display.windowCenterY = ((display.windowRect.top + display.windowRect.bottom) // 2)
+        display.centerPosX, display.centerPosY = display.centerPos
         
     def update(w, h):
         if (display.isFullscreen == False):
