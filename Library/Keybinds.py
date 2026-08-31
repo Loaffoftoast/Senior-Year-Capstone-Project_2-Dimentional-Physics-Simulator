@@ -23,6 +23,10 @@ class keybind:
         if keyPressed[pygame.K_F11]: 
             display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
             sim.fullscreen(display.isFullscreen)
+            
+        if keyPressed[pygame.K_RETURN] and (keyPressed[pygame.K_LALT] or keyPressed[pygame.K_RALT]):
+            display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
+            sim.fullscreen(display.isFullscreen)
 
         if keyPressed[pygame.K_UP]: 
             if keybind.upPressed == False:

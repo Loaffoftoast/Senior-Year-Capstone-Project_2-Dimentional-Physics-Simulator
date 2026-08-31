@@ -21,7 +21,7 @@ class sim:
 
         window_handle = pygame.display.get_wm_info()["window"]
         pywinstyles.change_header_color(window_handle, color="#000000FF") # Hex color code
-        pywinstyles.change_title_color(window_handle, color="#FF0000")  # Text color
+        pywinstyles.change_title_color(window_handle, color="#FFFFFF")  # Text color
 
 
     def stop(): #stop ends the loop

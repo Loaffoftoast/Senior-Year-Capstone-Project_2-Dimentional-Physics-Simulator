@@ -3,64 +3,37 @@ import pygame
 from Library.Sim import sim
 from Library.Display import display
 
-# PLEASE GOD FIGURE OUT HOW ANY OF THIS WORKS IM SO SCARED
 
 class graph:
     zoomLevel = 1
     currentInterval = 2
     intervalCount = 1
 
-    def _zoomAroundMouse(zoomAction):
-        mouseX, mouseY = pygame.mouse.get_pos()
-        oldSpacing = 80 * graph.zoomLevel
-        oldInterval = graph.currentInterval
-
-        # Convert the mouse position into graph coordinates before the zoom changes.
-        # This keeps the same value (for example, 1, 1) under the cursor after
-        # the zoom level and interval are adjusted.
-        worldX = ((mouseX - sim.centerX) / oldSpacing) * oldInterval
-        worldY = ((mouseY - sim.centerY) / oldSpacing) * oldInterval
-
-        zoomAction()
-
-        newSpacing = 80 * graph.zoomLevel
-        if newSpacing == 0:
-            return
-
-        sim.centerX = mouseX - (worldX / graph.currentInterval) * newSpacing
-        sim.centerY = mouseY - (worldY / graph.currentInterval) * newSpacing
-
     def zoomIn(zoomInterval):
-        def applyZoom():
-            graph.zoomLevel += zoomInterval
+        graph.zoomLevel += zoomInterval
 
-            if graph.intervalCount % 3 == 0:
-                if graph.zoomLevel >= 2.5:
-                    graph.currentInterval /= 2.5
-                    graph.zoomLevel = 1
-                    graph.intervalCount += 1
-            elif graph.zoomLevel >= 2:
-                graph.currentInterval /= 2
+        if graph.intervalCount % 3 == 0:
+            if graph.zoomLevel >= 2.5:
+                graph.currentInterval /= 2.5
                 graph.zoomLevel = 1
                 graph.intervalCount += 1
-
-        graph._zoomAroundMouse(applyZoom)
+        elif graph.zoomLevel >= 2:
+            graph.currentInterval /= 2
+            graph.zoomLevel = 1
+            graph.intervalCount += 1
 
     def zoomOut(zoomInterval):
-        def applyZoom():
-            graph.zoomLevel -= zoomInterval
+        graph.zoomLevel -= zoomInterval
 
-            if graph.zoomLevel < 1:
-                graph.intervalCount -= 1
-                if graph.intervalCount % 3 == 0:
-                    if graph.zoomLevel < 1:
-                        graph.currentInterval *= 2.5
-                        graph.zoomLevel = 2.4
-                else:
-                    graph.zoomLevel = 1.9
-                    graph.currentInterval *= 2
-
-        graph._zoomAroundMouse(applyZoom)
+        if graph.zoomLevel < 1:
+            graph.intervalCount -= 1
+            if graph.intervalCount % 3 == 0:
+                if graph.zoomLevel < 1:
+                    graph.currentInterval *= 2.5
+                    graph.zoomLevel = 2.4
+            else:
+                graph.zoomLevel = 1.9
+                graph.currentInterval *= 2
 
     def drawGraph():
         zoomLevel = graph.zoomLevel

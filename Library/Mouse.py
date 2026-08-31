@@ -51,6 +51,6 @@ class mouse:
 
     def scrollWheel(scrollY):
         if scrollY > 0:
-            graph.zoomIn(0.035)
+            graph.zoomIn(0.05)
         elif scrollY < 0:
-            graph.zoomOut(0.035)
+            graph.zoomOut(0.05)
