@@ -20,7 +20,7 @@ class sim:
         pygame.display.set_caption("Physics Simulation Senior Project - Alex LD")
 
         window_handle = pygame.display.get_wm_info()["window"]
-        pywinstyles.change_header_color(window_handle, color="#000000FF") # Hex color code
+        pywinstyles.change_header_color(window_handle, color="#00BFFFFF") # Hex color code
         pywinstyles.change_title_color(window_handle, color="#FFFFFF")  # Text color
 
 

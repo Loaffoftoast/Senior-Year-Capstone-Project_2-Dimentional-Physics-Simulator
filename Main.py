@@ -9,8 +9,6 @@ sys.path.insert(0, os.path.join(projectRoot, "Library"))
 
 import pygame
 
-import itertools
-
 from Library.Display import display
 
 from Library.Sim import sim

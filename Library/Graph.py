@@ -10,7 +10,7 @@ class graph:
     currentInterval = 2
     intervalCount = 1
 
-    def _zoomAroundMouse(zoomAction):
+    def zoomAroundMouse(zoomAction):
         mouseX, mouseY = pygame.mouse.get_pos()
         oldSpacing = 80 * graph.zoomLevel
         oldInterval = graph.currentInterval
@@ -44,7 +44,7 @@ class graph:
                 graph.zoomLevel = 1
                 graph.intervalCount += 1
 
-        graph._zoomAroundMouse(applyZoom)
+        graph.zoomAroundMouse(applyZoom)
 
     def zoomOut(zoomInterval):
         def applyZoom():
@@ -60,7 +60,7 @@ class graph:
                     graph.zoomLevel = 1.9
                     graph.currentInterval *= 2
 
-        graph._zoomAroundMouse(applyZoom)
+        graph.zoomAroundMouse(applyZoom)
 
     def drawGraph():
         zoomLevel = graph.zoomLevel
