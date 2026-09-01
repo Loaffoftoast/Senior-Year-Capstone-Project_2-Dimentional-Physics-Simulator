@@ -61,50 +61,36 @@ class graph:
                     graph.currentInterval *= 2
 
         graph.zoom(getZoomAmount)
-        
-    def drawGraph():
 
+    def drawCenterLines():
+        pygame.draw.line(display.screen, (200, 200, 200), (sim.centerX, 0),
+                    (sim.centerX, display.resHeight), 2)
+        pygame.draw.line(display.screen, (200, 200, 200), (0, sim.centerY),
+                    (display.resWidth, sim.centerY), 2)
+
+    def drawGraph():
+        if graph.currentInterval == 5:
+            spacing = 16 * graph.zoomLevel
+        else: 
+            spacing = 20 * graph.zoomLevel
+        
         lineColor = (50, 50, 50)
         
-        def drawCenterLines():
-            pygame.draw.line(display.screen, (200, 200, 200), (sim.centerX, 0),
-                        (sim.centerX, display.resHeight), 2)
-            pygame.draw.line(display.screen, (200, 200, 200), (0, sim.centerY),
-                        (display.resWidth, sim.centerY), 2)
+        graph.drawCenterLines()
         
-        drawCenterLines()
+        def getGraphLines(spacing):
+            xLines = range(-int(sim.centerX / spacing),
+                           int((display.resWidth - sim.centerX) / spacing) + 2)
+            yLines = range(-int(sim.centerY / spacing),
+                           int((display.resHeight - sim.centerY) / spacing) + 2)
+            return xLines, yLines
         
-        def getGridLines(interval):
-            if graph.currentInterval == 5:
-                gridSpacing = 16 * graph.zoomLevel
-            else: 
-                gridSpacing = 20 * graph.zoomLevel
-            
-            xGridLines = range(-int(sim.centerX / gridSpacing),
-                           int((display.resWidth - sim.centerX) / gridSpacing) + 2)
-            yGridLines = range(-int(sim.centerY / gridSpacing),
-                           int((display.resHeight - sim.centerY) / gridSpacing) + 2)
-            
-            return xGridLines, yGridLines
-            
-        def getIntervalLines():
-            
-            intervalSpacing = 80 * graph.zoomLevel
-            
-            xIntervalLines = range(-int(sim.centerX / intervalSpacing),
-                           int((display.resWidth - sim.centerX) / intervalSpacing) + 2)
-            yIntervalLines = range(-int(sim.centerY / intervalSpacing),
-                           int((display.resHeight - sim.centerY) / intervalSpacing) + 2)
-            
-            return xIntervalLines, yIntervalLines
+        xLines, yLines = getGraphLines(spacing)
         
-        xGridLines, yGridLines = getGridLines(spacing)
-        xIntervalLines, yIntervalLines = getIntervalLines()
-        
-        def drawGrids(interval, color):
-            xGridLines, yGridLines = getGridLines(interval)
+        def drawGrids(spacing, color):
+            xLines, yLines = getGraphLines(spacing)
             
-            for step in xGridLines:
+            for step in xLines:
                 x = sim.centerX + step * spacing
                 pygame.draw.line(display.screen, color, (x, 0), (x, display.resHeight), 1)
             for step in yLines:
@@ -116,20 +102,20 @@ class graph:
         else:
             drawGrids(20 * graph.zoomLevel, (50, 50, 50))
 
-        #for step in xLines:
-        #    i = step * spacing
-        #    pygame.draw.line(display.screen, (100, 100, 100), (sim.centerX + i, 0),
-        #                   (sim.centerX + i, display.resHeight), 1)
-        #for step in yLines:
-        #    i = step * spacing
-        #    pygame.draw.line(display.screen, (100, 100, 100), (0, sim.centerY + i),
-        #                   (display.resWidth, sim.centerY + i), 1)
-
         spacing = 80 * graph.zoomLevel
         xLines = range(-int(sim.centerX / spacing),
                        int((display.resWidth - sim.centerX) / spacing) + 2)
         yLines = range(-int(sim.centerY / spacing),
                        int((display.resHeight - sim.centerY) / spacing) + 2)
+
+        for step in xLines:
+            i = step * spacing
+            pygame.draw.line(display.screen, (100, 100, 100), (sim.centerX + i, 0),
+                           (sim.centerX + i, display.resHeight), 1)
+        for step in yLines:
+            i = step * spacing
+            pygame.draw.line(display.screen, (100, 100, 100), (0, sim.centerY + i),
+                           (display.resWidth, sim.centerY + i), 1)
 
         font = pygame.font.SysFont("Arial", 15)
         

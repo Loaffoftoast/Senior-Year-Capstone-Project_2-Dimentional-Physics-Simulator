@@ -11,7 +11,7 @@ class display:
     
     clock = pygame.time.Clock()
     
-    isFullscreen = False # inits isFullscreen variable
+    isFullscreen = True # inits isFullscreen variable
 
     resWidth, resHeight = pygame.display.get_desktop_sizes()[0] #
     

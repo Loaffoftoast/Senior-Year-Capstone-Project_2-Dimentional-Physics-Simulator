@@ -25,7 +25,7 @@ from Library.Events import events
         
 pygame.init() #Runs all the code below
 
-sim.fullscreen(False)
+sim.fullscreen(True)
 sim.start()
 
 while sim.running:
