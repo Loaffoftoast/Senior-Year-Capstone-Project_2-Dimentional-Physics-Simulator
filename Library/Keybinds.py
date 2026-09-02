@@ -1,8 +1,4 @@
-import os
-
 import pygame
-
-import itertools
 
 from Library.Sim import sim
 

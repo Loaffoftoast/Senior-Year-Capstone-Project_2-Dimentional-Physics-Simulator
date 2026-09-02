@@ -1,16 +1,8 @@
-import os
-
 import pygame
-
-import itertools
-
-import Library
 
 from Library.Sim import sim
 
 from Library.Display import display
-
-from Library.Graph import graph
 
 from Library.Mouse import mouse
 

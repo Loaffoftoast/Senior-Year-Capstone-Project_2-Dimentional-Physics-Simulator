@@ -2,8 +2,6 @@ import os
 
 import pygame
 
-import itertools
-
 import pywinstyles
 
 from Library.Display import display
