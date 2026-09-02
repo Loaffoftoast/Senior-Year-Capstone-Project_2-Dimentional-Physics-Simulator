@@ -44,6 +44,4 @@ while sim.running:
     fpsFont = pygame.font.SysFont("Arial", 15)
     display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
 
-
-
 pygame.quit()
