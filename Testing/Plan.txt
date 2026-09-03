@@ -1,0 +1,18 @@
+Things i need:
+    time
+    pos 
+    velocity
+    acceleration
+    mass
+    force
+    momentum
+    work
+    kinetic energy
+    potential energypower
+    friction
+    angle
+    angular velocity
+    angular acceleration
+    torque
+    inirtia
+    angular momentum
