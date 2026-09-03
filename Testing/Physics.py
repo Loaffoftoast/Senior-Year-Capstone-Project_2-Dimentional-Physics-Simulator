@@ -13,13 +13,8 @@ class physics:
     clock = pygame.time.Clock()
 
 
-    def math():
-        global distance
-        global time
-        
-        velocity = 60
-        distance = velocity * time
-
+    def getDistance(velocity, time):
+        return velocity * time
 
     # Main game loop
     running = True
@@ -41,7 +36,7 @@ class physics:
         if keys[pygame.K_LEFT]:
             time -= delta_time
             
-        math()
+        distance = getDistance(60, time)
 
         # Clear screen with background color
         screen.fill(BACKGROUND)

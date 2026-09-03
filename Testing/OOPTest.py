@@ -1,14 +1,27 @@
 import sys
 import pygame
-       
+
+#class keybinds:
 def getKeyPressed(key):
     #key = pygame.key.get_pressed
     global spacePressed, rightPressed, leftPressed
-    global objects, selectedCircle
+    global objects, selectedCircle, numberInput, numberInputTime, numberKeyPressed, nextObjectTime
     
-    if key[pygame.K_SPACE] and not spacePressed:
-        objectsClass.newObject()
+    numberKeys = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
+                pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0]
+        
+    
+    currentTime = pygame.time.get_ticks()
+    if key[pygame.K_SPACE]:
+        if not spacePressed:
+            objectsClass.newObject()
+            nextObjectTime = currentTime + 200
+        elif currentTime >= nextObjectTime:
+            objectsClass.newObject()
+            nextObjectTime = currentTime + 200
     spacePressed = key[pygame.K_SPACE]
+    
+    
         
     if objects:
         if key[pygame.K_LEFT] and not leftPressed:
@@ -18,7 +31,27 @@ def getKeyPressed(key):
         if key[pygame.K_RIGHT] and not rightPressed:
             selectedCircle = (selectedCircle + 1) % len(objects)
         rightPressed = key[pygame.K_RIGHT]
+        
 
+        for circleNumber, numberKey in enumerate(numberKeys, start=1):
+            if key[numberKey] and not numberKeyPressed[numberKey]:
+                if currentTime - numberInputTime <= 400:
+                    numberInput += str(circleNumber)
+                else:
+                    numberInput = str(circleNumber)
+                    
+                numberInputTime = currentTime
+
+                objectNumber = int(numberInput)
+                if not 1 <= objectNumber <= len(objects):
+                    numberInput = str(circleNumber)
+                    objectNumber = circleNumber
+
+                if 1 <= objectNumber <= len(objects):
+                    selectedCircle = objectNumber - 1
+
+            numberKeyPressed[numberKey] = key[numberKey]
+        
 
         if key[pygame.K_w]:
             objects[selectedCircle][1] -= objectSpeed
@@ -63,10 +96,11 @@ class objectsClass:
             )
             screen.blit(selectedText, (10, 10))
             
-    def labelCircles(objectNumber, obj):
-        pygame.draw.circle(screen, (255, 255, 255), (obj[0], obj[1]), 15)
+    def labelCircles(objectNumber, obj, selectedCircle):
+        circleColor = (255, 255, 0) if objectNumber == selectedCircle + 1 else (255, 255, 255)
+        pygame.draw.circle(screen, circleColor, (obj[0], obj[1]), 15)
         coordinateText = font.render(
-            f"{objectNumber}: ({obj[0]:.0f}, {obj[1]:.0f})",
+            f"{objectNumber}",
             True,
             (255, 255, 255),
         )
@@ -81,6 +115,14 @@ objects = []
 
 selectedCircle = 0
 objectSpeed = 0.5
+spacePressed = False
+nextObjectTime = 0
+numberInput = ""
+numberInputTime = -1001
+numberKeyPressed = {numberKey: False for numberKey in [
+    pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
+    pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0,
+]}
 
 running = True
 while running:
@@ -98,7 +140,7 @@ while running:
     objectsClass.displaySelectedCircle(selectedCircle)
     
     for objectNumber, obj in enumerate(objects, 1):
-        objectsClass.labelCircles(objectNumber, obj)
+        objectsClass.labelCircles(objectNumber, obj, selectedCircle)
 
 
 
