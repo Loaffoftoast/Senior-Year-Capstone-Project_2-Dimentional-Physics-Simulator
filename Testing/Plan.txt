@@ -1,18 +1,98 @@
 Things i need:
     time
-    pos 
-    velocity
-    acceleration
-    mass
-    force
-    momentum
-    work
-    kinetic energy
-    potential energypower
-    friction
+        pos 
+            velocity
+                acceleration
+
+                mass
+    *force*
+        f/m = a
+        time updates forces
+
+
+        momentum
+        work
+        kinetic energy
+        potential energy
+        friction
+    
+    =====================
+
+    collisions:
+        where will collisions come from
+        forces from contact
+        treat objects as springy materials
+            essentially what normal force is
+        
+        when 2 objects collide
+            go x distance into material
+            F = kx
+                k = springiness of material
+                get equation of spring coefficient
+            
+        calculating beforehand to find position
+            run equations for t step
+
+    =====================
+    
+    computing:
+        this runs for each shape
+            like a funnel maybe?
+            
+            Or find the forces then update everything at once:
+                in loop: find Forces
+                    update pos
+                        everything gets updated at the same time
+                        a = F/m
+                        v = v0 + a deltaT
+                
+                essentially split into 2 parts
+                    finding all your forces for everything involved
+                    then find position based on forces
+            
+            F(net) = {Fx, Fy}
+                for (i = 0; i < 2; i ++)
+                    this would do everything twice for x and y
+                    ex: a[i] = F[i] / mass
+                    
+            Performance inversely related to Accuracy
+                better Accuracy = less Performance
+                less Accuracy = better Performance
+        
+            collision
+                the shape can be defined above. collision will be based on 3 things:
+                    if the shape is a circle
+                        circle collision is found way differently than other shapes
+                        if not a circle then must be one of the other two
+                        detection:
+                            find the pos of two circles
+                            simply put, find if they collide using direction to other circle as well as the radius of the circle compared to the other circle
+
+                    if the shape is convex
+                        the easier to find collision
+                        essentially if the position of a line in one polygon intersects the position of a line in another one
+
+                    if the shape is concave
+                        the more difficult to find as you cant use the same method as convex due to an invisible line between the two edges of the concave point
+                        this is so hard to explain, but if P1 is a convex point, then P2 goes to the center of the shape, and P3 goes back out to be a convex point, 
+                            there is an invisible line between P1 and P3
+                        i dont think i want this one implimented
+
+                library of shapes vs creating own shapes
+                    library allows for simpler collision detection but less freedom
+                    creating own shapes requres me to code a way to create/import the shapes, mesh them, then find collision using those points
+                        way more freedom but way less Performance and way more code to write
+                        *may be able to import from a solidworks 2d sketch*
+                            possibility for 2 disconnected shapes in the same sketch to be connected in code, messing things up :c
+
+
+    =====================
+
     angle
     angular velocity
     angular acceleration
     torque
     inirtia
     angular momentum
+
+Order:
