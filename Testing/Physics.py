@@ -36,7 +36,15 @@ class physics:
         if keys[pygame.K_LEFT]:
             time -= delta_time
             
+            
+            
+            
+            
         distance = getDistance(60, time)
+
+
+
+
 
         # Clear screen with background color
         screen.fill(BACKGROUND)
