@@ -95,4 +95,14 @@ Things i need:
     inirtia
     angular momentum
 
-Order:
+    =====================
+
+    Forces:
+        Normal force
+        friction
+        tension
+        applied force
+        spring force
+        gravity
+
+        
