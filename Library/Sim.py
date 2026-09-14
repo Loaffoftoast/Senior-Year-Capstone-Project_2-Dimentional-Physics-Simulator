@@ -21,7 +21,6 @@ class sim:
         pywinstyles.change_header_color(window_handle, color="#00BFFFFF") # Hex color code
         pywinstyles.change_title_color(window_handle, color="#FFFFFF")  # Text color
 
-
     def stop(): #stop ends the loop
         sim.running = False
 
@@ -36,3 +35,8 @@ class sim:
             pygame.display.quit(); pygame.display.init()    # stops and starts display to save
             display.screen = pygame.display.set_mode((display.resWidth // 1.25, display.resHeight // 1.25), pygame.RESIZABLE | pygame.DOUBLEBUF)   
                 # above sets display size to smaller than fullscreen so that it can be Windowed + Resized
+                
+    currentTime = pygame.time.get_ticks()
+    
+    def getTime():
+        currentTime = pygame.time.get_ticks()

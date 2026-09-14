@@ -30,6 +30,7 @@ class mouse:
     def getPos():
         mouse.pos = pygame.mouse.get_pos()
         mouse.posX, mouse.posY = mouse.pos
+        return mouse.pos
 
     lastPos = posX, posY
     lastPosX, lastPosY = lastPos

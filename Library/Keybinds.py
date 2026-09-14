@@ -6,11 +6,14 @@ from Library.Display import display
 
 from Library.Graph import graph
 
+from Library.Physics import objectsClass
+
 
 
 class keybind:
     upPressed = False
     downPressed = False
+    spacePressed = False
 
     def getPressed(keyPressed):
         if keyPressed[pygame.K_ESCAPE]: 
@@ -39,3 +42,14 @@ class keybind:
 
         elif not keyPressed[pygame.K_DOWN]: 
             keybind.downPressed = False
+
+        if keyPressed[pygame.K_SPACE]:
+            if not keybind.spacePressed:
+                objectsClass.newObject()
+                objectsClass.nextObjectTime = sim.currentTime + 200
+            elif sim.currentTime >= objectsClass.nextObjectTime:
+                objectsClass.newObject()
+                objectsClass.nextObjectTime = sim.currentTime + 200
+            keybind.spacePressed = keyPressed[pygame.K_SPACE]
+        else:
+            keybind.spacePressed = False

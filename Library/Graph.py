@@ -161,10 +161,23 @@ class graph:
                                         sim.centerX + 4))
                     renderLabel(f"{coord:g}", (labelX, y + 2), yLabelColor)
 
+        def drawZoomInfo():
+            font = pygame.font.SysFont("Arial", 15)
+            spacing = 80 * graph.zoomLevel
+            text = f"Zoom: {graph.zoomLevel:g}x  Spacing: {spacing:g}px"
+            label = font.render(text, True, (200, 200, 200))
+            outline = font.render(text, True, (20, 20, 20))
+            x = display.resWidth - label.get_width() - 8
+            y = 8
+            for offsetX, offsetY in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                display.screen.blit(outline, (x + offsetX, y + offsetY))
+            display.screen.blit(label, (x, y))
+
         drawGridLines()
         drawIntervalLines()
         drawCenterLines()
         drawLabels()
+        drawZoomInfo()
 
 
 
