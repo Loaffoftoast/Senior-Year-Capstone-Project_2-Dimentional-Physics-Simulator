@@ -4,18 +4,31 @@ import pygame
 from Library.Graph import graph
 from Library.Mouse import mouse
 from Library.Display import display
+from Library.Sim import sim
             
 
 class objectsClass:
     objects = []
     nextObjectTime = 0
 
-    def newObject(radius=10, color=(255, 255, 255)):
-        mouseX, mouseY = mouse.getPos()
+    def newObject(radius = 1, color = (255, 255, 255)):
+        mousePosX, mousePosY = mouse.getPos()
+        posOffsetX, posOffsetY = mousePosX - sim.centerX, mousePosY - sim.centerY
         obj = {
-            "position": (mouseX, mouseY),
-            "radius": radius,
-            "color": color,
+            "position": 
+                (posOffsetX + sim.centerX, posOffsetY + sim.centerY),
+
+            "offset":
+                (posOffsetX, posOffsetY),
+                
+            "radius": 
+                radius * 80,
+
+            "startingRadius":
+                radius * 80,
+                
+            "color": 
+                color,
         }
         objectsClass.objects.append(obj)
         return obj
@@ -28,6 +41,17 @@ class objectsClass:
                 obj["position"],
                 obj["radius"],
             )
+            
+    def updatePos():
+        for obj in objectsClass.objects:
+            posOffsetX, posOffsetY = obj["offset"]
+            obj["position"] = (
+                sim.centerX + posOffsetX,
+                sim.centerY + posOffsetY,
+            )
+            obj["radius"] = (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel
     
-    #def getRadius(radius=10):
+    #def updatePositions():
+    #    for obj in objectsClass.objects:
+    #        obj["position"] = (pos)
         

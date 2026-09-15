@@ -21,6 +21,7 @@ def draw():
     graph.drawGraph()
     display.drawFPS()
     objectsClass.drawObjects()
+    objectsClass.updatePos()
         
 pygame.init() #Runs all the code below
 
@@ -48,6 +49,13 @@ while sim.running:
     fps = int(display.clock.get_fps())
     fpsFont = pygame.font.SysFont("Arial", 15)
     display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
+
+    centerText = fpsFont.render(
+        f"Graph center: ({sim.centerX}, {sim.centerY})",
+        True,
+        (255, 255, 255),
+    )
+    display.screen.blit(centerText, (10, 30))
     
     
 

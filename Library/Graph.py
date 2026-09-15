@@ -164,7 +164,8 @@ class graph:
         def drawZoomInfo():
             font = pygame.font.SysFont("Arial", 15)
             spacing = 80 * graph.zoomLevel
-            text = f"Zoom: {graph.zoomLevel:g}x  Spacing: {spacing:g}px"
+            text = (f"Zoom: {graph.zoomLevel:g}x  Spacing: {spacing:g}px  "
+                    f"Interval: {graph.currentInterval:g}")
             label = font.render(text, True, (200, 200, 200))
             outline = font.render(text, True, (20, 20, 20))
             x = display.resWidth - label.get_width() - 8
