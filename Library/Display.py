@@ -28,11 +28,3 @@ class display:
         if (display.isFullscreen == False):
             pygame.display.set_mode((w, h), pygame.RESIZABLE)
 
-    def getFPS():
-        fps = int(display.clock.get_fps())
-        return fps
-    
-    def drawFPS():
-        fps = display.getFPS()
-        fpsFont = pygame.font.SysFont("Arial", 15)
-        display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))

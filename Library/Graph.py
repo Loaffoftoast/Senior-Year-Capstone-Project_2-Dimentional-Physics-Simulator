@@ -48,6 +48,7 @@ class graph:
                 graph.intervalCount += 1
 
         graph.zoom(getZoomAmount)
+        graph.drawGraph()
 
     def zoomOut(interval):
         def getZoomAmount():
@@ -64,6 +65,7 @@ class graph:
                     graph.currentInterval *= 2
 
         graph.zoom(getZoomAmount)
+        graph.drawGraph()
 
     def drawGraph():
 
@@ -174,11 +176,14 @@ class graph:
                 display.screen.blit(outline, (x + offsetX, y + offsetY))
             display.screen.blit(label, (x, y))
 
+        display.screen.fill((20, 20, 20))
         drawGridLines()
         drawIntervalLines()
         drawCenterLines()
         drawLabels()
         drawZoomInfo()
+        
+        
 
 
 

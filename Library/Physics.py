@@ -13,27 +13,32 @@ class objectsClass:
 
     def newObject(radius = 1, color = (255, 255, 255)):
         mousePosX, mousePosY = mouse.getPos()
-        posOffsetX, posOffsetY = mousePosX - sim.centerX, mousePosY - sim.centerY
+        # Store the position in graph coordinates so the first update produces
+        # the same screen position as the mouse position.
+        posOffsetX = (mousePosX - sim.centerX) * graph.currentInterval / graph.zoomLevel
+        posOffsetY = (mousePosY - sim.centerY) * graph.currentInterval / graph.zoomLevel
         obj = {
             "position": 
-                (posOffsetX + sim.centerX, posOffsetY + sim.centerY),
+                (mousePosX, mousePosY),
 
             "offset":
                 (posOffsetX, posOffsetY),
                 
             "radius": 
-                radius * 80,
+                radius,
 
             "startingRadius":
-                radius * 80,
+                radius,
                 
             "color": 
                 color,
         }
         objectsClass.objects.append(obj)
         return obj
+        
 
     def drawObjects():
+        objectsClass.update()
         for obj in objectsClass.objects:
             pygame.draw.circle(
                 display.screen,
@@ -42,16 +47,12 @@ class objectsClass:
                 obj["radius"],
             )
             
-    def updatePos():
+    def update():
         for obj in objectsClass.objects:
             posOffsetX, posOffsetY = obj["offset"]
             obj["position"] = (
-                sim.centerX + posOffsetX,
-                sim.centerY + posOffsetY,
+                (sim.centerX + (posOffsetX * graph.zoomLevel / graph.currentInterval)),
+                (sim.centerY + (posOffsetY * graph.zoomLevel / graph.currentInterval)),
             )
-            obj["radius"] = (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel
-    
-    #def updatePositions():
-    #    for obj in objectsClass.objects:
-    #        obj["position"] = (pos)
+            obj["radius"] = (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel * 80
         

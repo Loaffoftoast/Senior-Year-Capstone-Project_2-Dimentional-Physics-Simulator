@@ -17,11 +17,8 @@ from Library.Events import events
 from Library.Physics import objectsClass
         
 def draw():
-    display.screen.fill((20, 20, 20))
-    graph.drawGraph()
-    display.drawFPS()
     objectsClass.drawObjects()
-    objectsClass.updatePos()
+    objectsClass.update()
         
 pygame.init() #Runs all the code below
 
@@ -45,17 +42,8 @@ while sim.running:
     sim.getTime()
 
     draw()
-
-    fps = int(display.clock.get_fps())
-    fpsFont = pygame.font.SysFont("Arial", 15)
-    display.screen.blit(fpsFont.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
-
-    centerText = fpsFont.render(
-        f"Graph center: ({sim.centerX}, {sim.centerY})",
-        True,
-        (255, 255, 255),
-    )
-    display.screen.blit(centerText, (10, 30))
+    
+    print("Screen size:", pygame.display.get_window_size())
     
     
 
