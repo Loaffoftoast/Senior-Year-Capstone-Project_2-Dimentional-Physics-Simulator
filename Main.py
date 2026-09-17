@@ -17,6 +17,7 @@ from Library.Events import events
 from Library.Physics import objectsClass
         
 def draw():
+    graph.drawGraph()
     objectsClass.drawObjects()
     objectsClass.update()
         
@@ -24,7 +25,6 @@ pygame.init() #Runs all the code below
 
 sim.fullscreen(True)
 sim.start()
-graph.drawGraph()
 
 while sim.running:
     for event in pygame.event.get(): # when any event happens
@@ -36,14 +36,13 @@ while sim.running:
     mouse.getInput(pygame.mouse.get_pressed())
     mouse.getPos()
     
-    pygame.display.flip() # updates the entire contents of the display with whatever drawn in code
-    display.clock.tick(240)
-    
     sim.getTime()
 
     draw()
-    
-    print("Screen size:", pygame.display.get_window_size())
+
+    # Present the completed frame only after the graph and objects are drawn.
+    pygame.display.flip()
+    display.clock.tick(60)
     
     
 

@@ -105,4 +105,7 @@ Things i need:
         spring force
         gravity
 
+        *** IMPLIMENT A FILE SYSTEM WHERE I CAN SAVE SIMULATIONS BY MARKING DOWN THE OBJECTS AND THEIR STARTING POSITIONS AND WHATNOT!!!!! ***
+
+
         

@@ -45,6 +45,7 @@ class objectsClass:
                 obj["color"],
                 obj["position"],
                 obj["radius"],
+                2,
             )
             
     def update():
@@ -54,5 +55,8 @@ class objectsClass:
                 (sim.centerX + (posOffsetX * graph.zoomLevel / graph.currentInterval)),
                 (sim.centerY + (posOffsetY * graph.zoomLevel / graph.currentInterval)),
             )
-            obj["radius"] = (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel * 80
+            obj["radius"] = round(
+                (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel * 80,
+                3,
+            )
         
