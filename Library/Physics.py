@@ -57,6 +57,6 @@ class objectsClass:
             )
             obj["radius"] = round(
                 (obj["startingRadius"] / graph.currentInterval) * graph.zoomLevel * 80,
-                3,
+                5,
             )
         

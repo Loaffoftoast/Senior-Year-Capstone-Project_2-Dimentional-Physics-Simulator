@@ -11,6 +11,23 @@ class graph:
     currentInterval = 2
     intervalCount = 1
 
+    lines = {
+        "origin": [],
+        "interval": [],
+        "grid": [],
+    }
+    
+        
+    theme = 'dark'
+    #theme = 'light'
+    
+    background = (0, 0, 0)
+    
+    if theme == 'dark':
+        background = (20, 20, 20)
+        #lines[] color = da color
+        
+
     def zoom(zoomAmount):
         mouseX, mouseY = pygame.mouse.get_pos()
         oldSpacing = 80 * graph.zoomLevel
@@ -69,63 +86,45 @@ class graph:
 
     def drawGraph():
 
-        def drawGridLines():
-            def getLinePos():
-                if graph.currentInterval == 5:
-                    spacing = 16 * graph.zoomLevel
-                else: 
-                    spacing = 20 * graph.zoomLevel
-                
-                xLines = range(-int(sim.centerX / spacing),
-                                int((display.resWidth - sim.centerX) / spacing) + 2)
-                yLines = range(-int(sim.centerY / spacing),
-                                int((display.resHeight - sim.centerY) / spacing) + 2)
+        def addLine(lineType, start, end, color, width=1):
+            graph.lines[lineType].append(
+                (display.screen, color, start, end, width)
+            )
 
-                return xLines, yLines, spacing
+        def drawLineSet(lineType):
+            for lineData in graph.lines[lineType]:
+                pygame.draw.line(*lineData)
 
-            def drawLines(xLines, yLines, spacing):
-                for step in xLines:
-                    x = sim.centerX + step * spacing
-                    pygame.draw.line(display.screen, (50, 50, 50), (x, 0), (x, display.resHeight), 1)
-                for step in yLines:
-                    y = sim.centerY + step * spacing
-                    pygame.draw.line(display.screen, (50, 50, 50), (0, y), (display.resWidth, y), 1)
+        graph.lines = {"origin": [], "interval": [], "grid": []}
 
-            xLines, yLines, spacing = getLinePos()
-            drawLines(xLines, yLines, spacing)
+        gridSpacing = (16 if graph.currentInterval == 5 else 20) * graph.zoomLevel
+        xLines = range(-int(sim.centerX / gridSpacing),
+                       int((display.resWidth - sim.centerX) / gridSpacing) + 2)
+        yLines = range(-int(sim.centerY / gridSpacing),
+                       int((display.resHeight - sim.centerY) / gridSpacing) + 2)
+        for step in xLines:
+            x = sim.centerX + step * gridSpacing
+            addLine("grid", (x, 0), (x, display.resHeight), (50, 50, 50))
+        for step in yLines:
+            y = sim.centerY + step * gridSpacing
+            addLine("grid", (0, y), (display.resWidth, y), (50, 50, 50))
 
-        def drawIntervalLines():
-            def getLinePos():
-                spacing = 80 * graph.zoomLevel
+        intervalSpacing = 80 * graph.zoomLevel
+        xLines = range(-int(sim.centerX / intervalSpacing),
+                       int((display.resWidth - sim.centerX) / intervalSpacing) + 2)
+        yLines = range(-int(sim.centerY / intervalSpacing),
+                       int((display.resHeight - sim.centerY) / intervalSpacing) + 2)
+        for step in xLines:
+            x = sim.centerX + step * intervalSpacing
+            addLine("interval", (x, 0), (x, display.resHeight), (100, 100, 100))
+        for step in yLines:
+            y = sim.centerY + step * intervalSpacing
+            addLine("interval", (0, y), (display.resWidth, y), (100, 100, 100))
 
-                xLines = range(-int(sim.centerX / spacing),
-                                int((display.resWidth - sim.centerX) / spacing) + 2)
-                yLines = range(-int(sim.centerY / spacing),
-                                int((display.resHeight - sim.centerY) / spacing) + 2)
-
-                return xLines, yLines, spacing
-
-            def drawLines(xLines, yLines, spacing):
-                for step in xLines:
-                    i = step * spacing
-                    pygame.draw.line(display.screen, (100, 100, 100), (sim.centerX + i, 0),
-                                (sim.centerX + i, display.resHeight), 1)
-                for step in yLines:
-                    i = step * spacing
-                    pygame.draw.line(display.screen, (100, 100, 100), (0, sim.centerY + i),
-                                (display.resWidth, sim.centerY + i), 1)
-
-            xLines, yLines, spacing = getLinePos()
-            drawLines(xLines, yLines, spacing)
-
-        def drawCenterLines():
-            def drawLines():
-                pygame.draw.line(display.screen, (200, 200, 200), (sim.centerX, 0),
-                            (sim.centerX, display.resHeight), 2)
-                pygame.draw.line(display.screen, (200, 200, 200), (0, sim.centerY),
-                            (display.resWidth, sim.centerY), 2)
-
-            drawLines()
+        addLine("origin", (sim.centerX, 0),
+                (sim.centerX, display.resHeight), (200, 200, 200), 2)
+        addLine("origin", (0, sim.centerY),
+                (display.resWidth, sim.centerY), (200, 200, 200), 2)
 
         def drawLabels():
             def renderLabel(text, position, color):
@@ -177,9 +176,9 @@ class graph:
             display.screen.blit(label, (x, y))
 
         display.screen.fill((20, 20, 20))
-        drawGridLines()
-        drawIntervalLines()
-        drawCenterLines()
+        drawLineSet("grid")
+        drawLineSet("interval")
+        drawLineSet("origin")
         drawLabels()
         drawZoomInfo()
         
