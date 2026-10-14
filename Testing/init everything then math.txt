@@ -1,0 +1,6 @@
+init everything then math
+
+initial velocity, pos, direction, & acceleration
+    - R resets to initial
+    - space pauses
+    - time is always initially 0

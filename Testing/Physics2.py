@@ -31,7 +31,7 @@ mass = 10 #Kg
 #μk = 0 
 
 v = 0.0
-a = 0.0
+a = [0.0, 0.0]
 g = -9.81
 gravity = None
 positionY = float(centerPosY)
@@ -96,7 +96,6 @@ while running:
     pygame.draw.circle(screen, (255, 255, 255), (centerPosX, round(positionY)), 25)
     label.objectValues(v, a, elapsedTime)
     label.forces(netForce)
-    
     
     
     
