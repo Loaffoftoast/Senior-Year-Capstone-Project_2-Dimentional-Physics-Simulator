@@ -32,7 +32,11 @@ class physics:
     def getDistance(velocity, time):
         return velocity * time
 
-    # Main game loop
+
+    
+    
+    
+    
     running = True
     while running:
         for event in pygame.event.get():
