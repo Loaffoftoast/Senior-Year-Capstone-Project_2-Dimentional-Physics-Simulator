@@ -76,7 +76,7 @@ while running:
                 timeScale = 1.0
             elif event.key == pygame.K_LEFT:
                 timeScale = -1.0
-            elif event.key == pygame.K_r:
+            elif event.key == pygame.K_R:
                 elapsedTime = 0.0
                 objects = [Body(mass, v, a, 10)]
                 timeScale = 0.0
