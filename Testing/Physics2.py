@@ -5,6 +5,7 @@ pygame.init()
 font = pygame.font.Font(None, 28)
 
 screen = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.DOUBLEBUF)
+
 pygame.display.set_caption("Physics")
 
 clock = pygame.time.Clock()
@@ -22,6 +23,29 @@ elapsedTime = 0.0
 
 dt = 0
 
+class Window_Border:
+    def draw_border():
+        pygame.draw.rect(screen, (255, 255, 255), (0, 0, windowRect.width, 36))
+    
+    def draw_X():
+        rect = pygame.Rect(windowRect.width - 36, 0, 36, 36)
+        if rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, (255, 0, 0), (windowRect.width - 46, 0, windowRect.width, 36))
+            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 18, 12), (windowRect.width - 28, 22), 2)
+            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 28, 12), (windowRect.width - 18, 22), 2)
+            
+        else:
+            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 18, 12), (windowRect.width - 28, 22), 1)
+            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 28, 12), (windowRect.width - 18, 22), 1)
+    
+    def draw_fullscreen():
+        rect = pygame.Rect(windowRect.width - 92, 0, 46, 36)
+        if rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, (200, 200, 200), (windowRect.width - 92, 0, 46, 36))
+        
+        
+        
+
 class label:
     def objectValues(vx, vy, ax, ay, elapsedTime):
         values = [
@@ -32,7 +56,7 @@ class label:
         for index, value in enumerate(values):
             screen.blit(font.render(value, True, (255, 255, 255)), (15, 15 + index * 30))
                     
-class Body:
+class Dynamic_Body:
     def __init__(self, mass, v, a, r):
         self.dx = centerPosX
         self.dy = centerPosY
@@ -59,14 +83,34 @@ class Body:
         
         pygame.draw.circle(screen, (255, 255, 255), (self.dx, self.dy), self.r)
         
+        
+class Static_Body:
+    def __init__(self, r):
+        self.dx = centerPosX
+        self.dy = centerPosY
+        
+        self.vx = 0
+        self.vy = 0
+        
+        self.ax = 0
+        self.ay = 0
+
+        self.r = r
+        
+    def update(self, dt):
+        pygame.draw.circle(screen, (255, 255, 255), (self.dx, self.dy), self.r)
+        
 objects = []
-objects.append(Body(mass, v, a, 10))
+objects.append(Static_Body(10))
 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if pygame.Rect(windowRect.width - 36, 0, 36, 36).collidepoint(event.pos):
+                running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
@@ -76,9 +120,9 @@ while running:
                 timeScale = 1.0
             elif event.key == pygame.K_LEFT:
                 timeScale = -1.0
-            elif event.key == pygame.K_R:
+            elif event.key == pygame.K_r:
                 elapsedTime = 0.0
-                objects = [Body(mass, v, a, 10)]
+                objects = [Static_Body(10)]
                 timeScale = 0.0
         elif event.type == pygame.KEYUP and event.key in (pygame.K_RIGHT, pygame.K_LEFT):
             timeScale = 0.0
@@ -93,6 +137,9 @@ while running:
     for obj in objects:
         obj.update(dt)
 
+    Window_Border.draw_border()
+    Window_Border.draw_X()
+    Window_Border.draw_fullscreen()
     pygame.display.flip()
     clock.tick(60)
 
