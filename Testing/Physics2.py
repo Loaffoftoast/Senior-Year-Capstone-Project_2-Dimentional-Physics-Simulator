@@ -1,5 +1,6 @@
 import pygame
 import sys
+from pygame._sdl2 import Window
 
 pygame.init()
 font = pygame.font.Font(None, 28)
@@ -103,6 +104,9 @@ class Static_Body:
 objects = []
 objects.append(Static_Body(10))
 
+dragging = False
+dragOffset = (0, 0)
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -111,6 +115,19 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if pygame.Rect(windowRect.width - 36, 0, 36, 36).collidepoint(event.pos):
                 running = False
+            elif pygame.Rect(0, 0, windowRect.width - 92, 36).collidepoint(event.pos):
+                dragging = True
+                dragOffset = event.pos
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            dragging = False
+        elif event.type == pygame.MOUSEMOTION and dragging:
+            window = Window.from_display_module()
+            windowX, windowY = window.position
+            mouseX, mouseY = pygame.mouse.get_pos()
+            window.position = (
+                windowX + mouseX - dragOffset[0],
+                windowY + mouseY - dragOffset[1],
+            )
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
