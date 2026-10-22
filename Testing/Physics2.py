@@ -107,6 +107,60 @@ objects.append(Static_Body(10))
 dragging = False
 dragOffset = (0, 0)
 
+
+
+
+import tkinter as tk
+from tkinter import filedialog
+
+# Initialize tkinter and hide its root window
+root = tk.Tk()
+root.withdraw()
+root.attributes('-topmost', True)  # Bring dialog to the front
+
+class FileHandler:
+    loaded = None
+    # Open file explorer dialog\
+    def load():
+        file_path = filedialog.askopenfilename(
+            title='Select Data File',
+            filetypes=[
+                ('JSON files', '*.JSON'),
+            ],
+        )
+
+        if file_path:
+            print(f'Selected file: {file_path}')
+            # Now open and read the file using Python
+            with open(file_path, 'r') as f:
+                data = f.read()
+            print(data)
+        FileHandler.loaded = file_path
+
+    def save():
+        global objects
+        
+        
+        if FileHandler.loaded == None: 
+            file_path = filedialog.asksaveasfilename(
+                title='Save Data File',
+                defaultextension='.JSON',
+                filetypes=[
+                    ('JSON files', '*.JSON'),
+                ],
+            )
+            if file_path:
+                with open(file_path, 'w') as f:
+                    f.write(str(objects))
+                print(f'Saved data to: {file_path}')
+                FileHandler.loaded = file_path
+        
+        else:
+            with open(FileHandler.loaded, 'w') as f:
+                f.write(objects)
+            print(f'Saved data to: {FileHandler.loaded}')
+                
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -141,6 +195,10 @@ while running:
                 elapsedTime = 0.0
                 objects = [Static_Body(10)]
                 timeScale = 0.0
+            elif event.key == pygame.K_l:
+                FileHandler.load()
+            elif event.key == pygame.K_s:
+                FileHandler.save()
         elif event.type == pygame.KEYUP and event.key in (pygame.K_RIGHT, pygame.K_LEFT):
             timeScale = 0.0
 
