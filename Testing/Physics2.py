@@ -1,5 +1,7 @@
 import pygame
 import sys
+import copy
+import json
 from pygame._sdl2 import Window
 
 pygame.init()
@@ -23,13 +25,15 @@ timeScale = 0.0
 elapsedTime = 0.0
 
 dt = 0
+save_status = None
+save_status_until = 0
 
 class Window_Border:
     def draw_border():
         pygame.draw.rect(screen, (255, 255, 255), (0, 0, windowRect.width, 36))
     
     def draw_X():
-        rect = pygame.Rect(windowRect.width - 36, 0, 36, 36)
+        rect = pygame.Rect(windowRect.width - 46, 0, 46, 36)
         if rect.collidepoint(pygame.mouse.get_pos()):
             pygame.draw.rect(screen, (255, 0, 0), (windowRect.width - 46, 0, windowRect.width, 36))
             pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 18, 12), (windowRect.width - 28, 22), 2)
@@ -58,10 +62,11 @@ class label:
             screen.blit(font.render(value, True, (255, 255, 255)), (15, 15 + index * 30))
                     
 class Dynamic_Body:
-    def __init__(self, mass, v, a, r):
-        self.dx = centerPosX
-        self.dy = centerPosY
-        
+    global centerPosX, centerPosY
+    def __init__(self, dy, dx, mass, v, a, r):
+        self.dx = centerPosX + dx
+        self.dy = centerPosY + dy
+
         self.vx = v[0]
         self.vy = v[1]
         
@@ -86,15 +91,10 @@ class Dynamic_Body:
         
         
 class Static_Body:
-    def __init__(self, r):
-        self.dx = centerPosX
-        self.dy = centerPosY
-        
-        self.vx = 0
-        self.vy = 0
-        
-        self.ax = 0
-        self.ay = 0
+    global centerPosX, centerPosY
+    def __init__(self, dy, dx, r):
+        self.dx = centerPosX + dx
+        self.dy = centerPosY + dy
 
         self.r = r
         
@@ -102,7 +102,6 @@ class Static_Body:
         pygame.draw.circle(screen, (255, 255, 255), (self.dx, self.dy), self.r)
         
 objects = []
-objects.append(Static_Body(10))
 
 dragging = False
 dragOffset = (0, 0)
@@ -120,46 +119,99 @@ root.attributes('-topmost', True)  # Bring dialog to the front
 
 class FileHandler:
     loaded = None
-    # Open file explorer dialog\
+    # Open file explorer dialog
     def load():
+        global objects, initial_objects, elapsedTime, save_status, save_status_until
+
         file_path = filedialog.askopenfilename(
             title='Select Data File',
             filetypes=[
-                ('JSON files', '*.JSON'),
+                ('JSON files', '*.json *.JSON'),
             ],
         )
 
         if file_path:
-            print(f'Selected file: {file_path}')
-            # Now open and read the file using Python
+            save_status = 'Loading...'
+            status_surface = font.render(save_status, True, (255, 255, 255))
+            screen.blit(status_surface, (10, windowRect.height - status_surface.get_height() - 10))
+            pygame.display.flip()
+
             with open(file_path, 'r') as f:
-                data = f.read()
-            print(data)
-        FileHandler.loaded = file_path
+                data = json.load(f)
+
+            loaded_objects = []
+            for item in data['objects']:
+                dx = item['x'] - centerPosX
+                dy = item['y'] - centerPosY
+                if item['type'] == 'dynamic':
+                    obj = Dynamic_Body(
+                        dy, dx, item.get('mass'), item['velocity'],
+                        item['acceleration'], item['radius']
+                    )
+                elif item['type'] == 'static':
+                    obj = Static_Body(dy, dx, item['radius'])
+                else:
+                    raise ValueError(f"Unknown object type: {item['type']}")
+                loaded_objects.append(obj)
+
+            objects = loaded_objects
+            initial_objects = copy.deepcopy(objects)
+            elapsedTime = 0.0
+            FileHandler.loaded = file_path
+            save_status = 'Loaded!'
+            save_status_until = pygame.time.get_ticks() + 1200
 
     def save():
-        global objects
-        
-        
+        global initial_objects, save_status, save_status_until
+
         if FileHandler.loaded == None: 
             file_path = filedialog.asksaveasfilename(
                 title='Save Data File',
                 defaultextension='.JSON',
                 filetypes=[
-                    ('JSON files', '*.JSON'),
+                    ('JSON files', '*.json *.JSON'),
                 ],
             )
-            if file_path:
-                with open(file_path, 'w') as f:
-                    f.write(str(objects))
-                print(f'Saved data to: {file_path}')
-                FileHandler.loaded = file_path
-        
         else:
-            with open(FileHandler.loaded, 'w') as f:
-                f.write(objects)
-            print(f'Saved data to: {FileHandler.loaded}')
-                
+            file_path = FileHandler.loaded
+
+        if file_path:
+            save_status = 'Saving...'
+            status_surface = font.render(save_status, True, (255, 255, 255))
+            screen.blit(status_surface, (10, windowRect.height - status_surface.get_height() - 10))
+            pygame.display.flip()
+
+            data = {'objects': []}
+            for obj in initial_objects:
+                item = {
+                    'type': 'dynamic' if isinstance(obj, Dynamic_Body) else 'static',
+                    'x': obj.dx,
+                    'y': obj.dy,
+                    'radius': obj.r,
+                }
+                if isinstance(obj, Dynamic_Body):
+                    item.update({
+                        'mass': getattr(obj, 'mass', None),
+                        'velocity': [obj.vx, obj.vy],
+                        'acceleration': [obj.ax, obj.ay],
+                    })
+                data['objects'].append(item)
+
+            with open(file_path, 'w') as f:
+                json.dump(data, f, indent=2)
+            FileHandler.loaded = file_path
+            save_status = 'Saved!'
+            save_status_until = pygame.time.get_ticks() + 1200
+             
+             
+
+# objects.append(Static_Body(20, 100, 10))
+# objects.append(Dynamic_Body(-30, -100, None, [-10, 100], [0, -20], 10))
+# objects.append(Dynamic_Body(-70, 200, None, [100, 25], [-10, -9.81], 10))
+
+initial_objects = copy.deepcopy(objects)
+
+           
 
 running = True
 while running:
@@ -193,7 +245,7 @@ while running:
                 timeScale = -1.0
             elif event.key == pygame.K_r:
                 elapsedTime = 0.0
-                objects = [Static_Body(10)]
+                objects = copy.deepcopy(initial_objects)
                 timeScale = 0.0
             elif event.key == pygame.K_l:
                 FileHandler.load()
@@ -207,7 +259,10 @@ while running:
     dt = (clock.get_time() / 1000.0) * timeScale
     elapsedTime += dt
 
-    label.objectValues(objects[0].vx, objects[0].vy, objects[0].ax, objects[0].ay, elapsedTime)
+    #if objects:
+    #    label.objectValues(objects[0].vx, objects[0].vy, objects[0].ax, objects[0].ay, elapsedTime)
+    #else:
+    #    label.objectValues(0, 0, 0, 0, elapsedTime)
 
     for obj in objects:
         obj.update(dt)
@@ -215,6 +270,12 @@ while running:
     Window_Border.draw_border()
     Window_Border.draw_X()
     Window_Border.draw_fullscreen()
+    if save_status:
+        if save_status in ('Saved!', 'Loaded!') and pygame.time.get_ticks() >= save_status_until:
+            save_status = None
+        else:
+            status_surface = font.render(save_status, True, (255, 255, 255))
+            screen.blit(status_surface, (10, windowRect.height - status_surface.get_height() - 10))
     pygame.display.flip()
     clock.tick(60)
 
