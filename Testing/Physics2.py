@@ -33,20 +33,36 @@ class Window_Border:
         pygame.draw.rect(screen, (255, 255, 255), (0, 0, windowRect.width, 36))
     
     def draw_X():
-        rect = pygame.Rect(windowRect.width - 46, 0, 46, 36)
+        rect = pygame.Rect(windowRect.width - (46 * 1), 0, 46, 36)
         if rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, (255, 0, 0), (windowRect.width - 46, 0, windowRect.width, 36))
-            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 18, 12), (windowRect.width - 28, 22), 2)
-            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 28, 12), (windowRect.width - 18, 22), 2)
+            pygame.draw.rect(screen, (255, 0, 0), (windowRect.width - (46 * 1), 0, windowRect.width, 36))
+            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 19, 12), (windowRect.width - 29, 22), 2)
+            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 29, 12), (windowRect.width - 19, 22), 2)
             
         else:
-            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 18, 12), (windowRect.width - 28, 22), 1)
-            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 28, 12), (windowRect.width - 18, 22), 1)
+            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 19, 12), (windowRect.width - 29, 22), 1)
+            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 29, 12), (windowRect.width - 19, 22), 1)
     
     def draw_fullscreen():
-        rect = pygame.Rect(windowRect.width - 92, 0, 46, 36)
+        rect = pygame.Rect(windowRect.width - (46 * 2), 0, 46, 36)
         if rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, (200, 200, 200), (windowRect.width - 92, 0, 46, 36))
+            button_color = (230, 230, 230)
+            pygame.draw.rect(screen, (230, 230, 230), (windowRect.width - (46 * 2), 0, 46, 36))
+        else:
+            button_color = (255, 255, 255)
+            
+        
+        pygame.draw.rect(screen, button_color, (windowRect.width - (46 * 2) + 15, 13, 12, 12), 1)
+        pygame.draw.rect(screen, (50, 50, 50), (windowRect.width - (46 * 2) + 15, 13, 12, 12), 1)
+        pygame.draw.rect(screen, button_color, (windowRect.width - (46 * 2) + 19, 9, 12, 12))
+        pygame.draw.rect(screen, (50, 50, 50), (windowRect.width - (46 * 2) + 19, 9, 12, 12), 1)
+                
+    def draw_minimize():
+        rect = pygame.Rect(windowRect.width - (46 * 3), 0, 46, 36)
+        if rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, (230, 230, 230), (windowRect.width - (46 * 3), 0, 46, 36))
+            
+        pygame.draw.line(screen, (50, 50, 50), (windowRect.width - (46 * 3) + 17, 16), (windowRect.width - (46 * 3) + 29, 16), 1)
         
         
         
@@ -219,8 +235,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if pygame.Rect(windowRect.width - 36, 0, 36, 36).collidepoint(event.pos):
+            if pygame.Rect(windowRect.width - 46, 0, 46, 36).collidepoint(event.pos):
                 running = False
+            elif pygame.Rect(windowRect.width - 138, 0, 46, 36).collidepoint(event.pos):
+                Window.from_display_module().minimize()
             elif pygame.Rect(0, 0, windowRect.width - 92, 36).collidepoint(event.pos):
                 dragging = True
                 dragOffset = event.pos
@@ -270,6 +288,7 @@ while running:
     Window_Border.draw_border()
     Window_Border.draw_X()
     Window_Border.draw_fullscreen()
+    Window_Border.draw_minimize()
     if save_status:
         if save_status in ('Saved!', 'Loaded!') and pygame.time.get_ticks() >= save_status_until:
             save_status = None
