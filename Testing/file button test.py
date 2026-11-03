@@ -119,7 +119,12 @@ class CustomWindow:
 
     def toggle_fullscreen(self):
         if self.is_fullscreen:
+            # Ensure the window is restored and brought forward when leaving fullscreen.
+            self.root.state("normal")
             self.root.geometry(self.windowed_geometry)
+            self.root.deiconify()
+            self.root.lift()
+            self.root.focus_force()
             self.fullscreen_button.config(text="□")
             self.fullscreen_button.config(font=("TkDefaultFont", 16))
             self.is_fullscreen = False
@@ -154,6 +159,20 @@ class CustomWindow:
 
     def run(self):
         self.root.mainloop()
+
+def show_in_taskbar(root):
+    """Set Windows extended styles so the borderless window appears in the taskbar."""
+    from ctypes import windll
+
+    hwnd = windll.user32.GetParent(root.winfo_id())
+    style = windll.user32.GetWindowLongW(hwnd, -20)
+    style = (style & ~0x00000080) | 0x00040000
+    windll.user32.SetWindowLongW(hwnd, -20, style)
+    root.wm_withdraw()
+    root.after(10, root.wm_deiconify)
+
+
+
 
 if __name__ == "__main__":
     app = CustomWindow()

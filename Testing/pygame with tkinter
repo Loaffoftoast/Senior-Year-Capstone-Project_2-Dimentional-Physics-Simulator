@@ -1,0 +1,248 @@
+import json
+import os
+import tkinter as tk
+from tkinter import filedialog, messagebox
+
+import pygame
+
+
+WINDOW_BACKGROUND = "#121212"
+WINDOW_SIZE = (800, 600)
+GAME_SIZE = (600, 400)
+BLUE = (0, 128, 255)
+ORANGE = (255, 128, 0)
+
+
+def create_custom_border(parent, root, on_close, on_toggle_size, on_minimize, on_import):
+    """Create the draggable title bar and its window controls."""
+    frame = tk.Frame(parent, bg=WINDOW_BACKGROUND, height=34)
+    frame.pack(fill="x")
+    frame.pack_propagate(False)
+
+    file_button = tk.Button(
+        frame,
+        text="File",
+        command=on_import,
+        bg=WINDOW_BACKGROUND,
+        fg="white",
+        bd=0,
+        activebackground="#2B2B30",
+        activeforeground="black",
+        padx=10,
+        cursor="hand2",
+    )
+    file_button.pack(side="left", fill="y")
+    title = tk.Label(
+        frame,
+        text="Pygame Embedded in Tkinter",
+        bg=WINDOW_BACKGROUND,
+        fg="white",
+        padx=10,
+    )
+    title.pack(side="left", fill="y")
+
+    button_options = {
+        "bg": WINDOW_BACKGROUND,
+        "fg": "white",
+        "activeforeground": "white",
+        "bd": 0,
+        "width": 4,
+        "font": ("Arial", 12),
+        "cursor": "hand2",
+    }
+    close_button = tk.Button(
+        frame,
+        text="✕",
+        command=on_close,
+        activebackground="#c42b1c",
+        **button_options,
+    )
+    close_button.configure(font=("Arial", 10))
+    close_button.pack(side="right", fill="y")
+    
+    size_button = tk.Button(
+        frame,
+        text="□",
+        command=on_toggle_size,
+        activebackground="#2B2B30",
+        **button_options,
+    )
+    size_button.configure(font=("Arial", 16))
+    size_button.pack(side="right", fill="y")
+    
+    minimize_button = tk.Button(
+        frame,
+        text="−",
+        command=on_minimize,
+        #command=minimize_program,
+        activebackground="#2B2B30",
+        **button_options,
+    )
+    minimize_button.configure(font=("Arial", 14))
+    minimize_button.pack(side="right", fill="y")
+
+    drag_state = {}
+
+    def start_drag(event):
+        drag_state["x"] = event.x_root - root.winfo_x()
+        drag_state["y"] = event.y_root - root.winfo_y()
+
+    def drag(event):
+        if drag_state:
+            root.geometry(
+                f"+{event.x_root - drag_state['x']}+{event.y_root - drag_state['y']}"
+            )
+
+    for widget in (frame, title):
+        widget.bind("<Button-1>", start_drag)
+        widget.bind("<B1-Motion>", drag)
+
+    return size_button
+    
+def show_in_taskbar(root):
+    """Set Windows extended styles so the borderless window appears in the taskbar."""
+    from ctypes import windll
+
+    hwnd = windll.user32.GetParent(root.winfo_id())
+    style = windll.user32.GetWindowLongW(hwnd, -16)
+    style &= ~(0x00C00000 | 0x00800000 | 0x00400000 | 0x00040000)
+    windll.user32.SetWindowLongW(hwnd, -16, style)
+
+    style = windll.user32.GetWindowLongW(hwnd, -20)
+    style = (style & ~0x00000080) | 0x00040000
+    windll.user32.SetWindowLongW(hwnd, -20, style)
+    windll.user32.SetWindowPos(hwnd, 0, 0, 0, 0, 0, 0x0027)
+    root.wm_withdraw()
+    root.after(10, root.wm_deiconify)
+    
+
+
+class PygameTkinterApp:
+    """Own the Tkinter interface and the embedded Pygame event loop."""
+
+    def __init__(self):
+        self.running = True
+        self.color = BLUE
+        self.imported_json = None
+        self.windowed_geometry = f"{WINDOW_SIZE[0]}x{WINDOW_SIZE[1]}"
+        self.is_maximized = False
+        self.minimizing = False
+        self.root = tk.Tk()
+        #self.root.wm_overrideredirect(True)
+        self.root.title("Pygame Embedded in Tkinter")
+        self.root.geometry(f"{WINDOW_SIZE[0]}x{WINDOW_SIZE[1]}")
+        self.root.configure(bg=WINDOW_BACKGROUND)
+
+        border = tk.Frame(
+            self.root,
+            bg=WINDOW_BACKGROUND,
+            highlightbackground="#667085",
+            highlightthickness=1,
+        )
+        border.pack(fill="both", expand=True)
+        self.window_button = create_custom_border(
+            border,
+            self.root,
+            self.close,
+            self.toggle_window_size,
+            self.minimize,
+            self.import_json,
+        )
+        self.root.bind("<Map>", self.restore_from_minimize, add="+")
+
+        content = tk.Frame(border, bg=WINDOW_BACKGROUND)
+        content.pack(fill="both", expand=True)
+
+        self.embed_frame = tk.Frame(content)
+        self.embed_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Create the native Tk window before passing its ID to SDL.
+        self.root.update()
+        self.initialize_pygame()
+        self.embed_frame.bind("<Configure>", self.resize_pygame)
+        show_in_taskbar(self.root)
+
+    def import_json(self):
+        path = filedialog.askopenfilename(
+            title="Import JSON file",
+            filetypes=(("JSON files", "*.json"), ("All files", "*.*")),
+        )
+        if not path:
+            return
+        try:
+            with open(path, "r", encoding="utf-8") as json_file:
+                self.imported_json = json.load(json_file)
+        except (OSError, json.JSONDecodeError) as error:
+            messagebox.showerror("Import failed", f"Could not import JSON file:\n{error}")
+
+    def toggle_window_size(self):
+        if self.is_maximized:
+            self.root.state("normal")
+            self.root.geometry(self.windowed_geometry)
+            self.window_button.configure(text="□")
+            self.window_button.configure(font=("Arial", 16))
+            self.is_maximized = False
+        else:
+            self.windowed_geometry = self.root.geometry()
+            self.root.state("zoomed")
+            self.window_button.configure(text="❐")
+            self.window_button.configure(font=("Arial", 12))
+            self.is_maximized = True
+
+    def minimize(self):
+        self.root.iconify()
+
+    def restore_from_minimize(self, event):
+        self.root.deiconify()
+
+    def initialize_pygame(self):
+        os.environ["SDL_WINDOWID"] = str(self.embed_frame.winfo_id())
+        os.environ["SDL_VIDEODRIVER"] = "windib"
+        pygame.init()
+        size = (max(1, self.embed_frame.winfo_width()), max(1, self.embed_frame.winfo_height()))
+        self.screen = pygame.display.set_mode(size)
+        self.clock = pygame.time.Clock()
+
+    def resize_pygame(self, event):
+        size = (event.width, event.height)
+        if size[0] > 0 and size[1] > 0 and self.screen.get_size() != size:
+            self.screen = pygame.display.set_mode(size)
+
+    def close(self):
+        self.running = False
+        try:
+            self.root.destroy()
+        except tk.TclError:
+            pass
+
+    def handle_pygame_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.color = ORANGE if self.color == BLUE else BLUE
+
+    def draw(self):
+        self.screen.fill(self.color)
+        pygame.draw.rect(self.screen, (255, 255, 255), (250, 150, 100, 100))
+        pygame.display.flip()
+
+    def run(self):
+        try:
+            while self.running:
+                self.handle_pygame_events()
+                self.draw()
+                try:
+                    self.root.update()
+                except tk.TclError:
+                    self.running = False
+                self.clock.tick(60)
+        finally:
+            pygame.quit()
+
+
+def main():
+    PygameTkinterApp().run()
+
+if __name__ == "__main__":
+    main()
