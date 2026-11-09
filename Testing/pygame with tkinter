@@ -84,13 +84,17 @@ def create_custom_border(parent, root, on_close, on_toggle_size, on_minimize, on
     drag_state = {}
 
     def start_drag(event):
-        drag_state["x"] = event.x_root - root.winfo_x()
-        drag_state["y"] = event.y_root - root.winfo_y()
+        drag_state["pointer_x"] = event.x_root
+        drag_state["pointer_y"] = event.y_root
+        drag_state["window_x"] = root.winfo_rootx()
+        drag_state["window_y"] = root.winfo_rooty()
 
     def drag(event):
         if drag_state:
+            x = drag_state["window_x"] + event.x_root - drag_state["pointer_x"]
+            y = drag_state["window_y"] + event.y_root - drag_state["pointer_y"]
             root.geometry(
-                f"+{event.x_root - drag_state['x']}+{event.y_root - drag_state['y']}"
+                f"+{x}+{y}"
             )
 
     for widget in (frame, title):
@@ -120,9 +124,31 @@ def show_in_taskbar(root):
 class PygameTkinterApp:
     """Own the Tkinter interface and the embedded Pygame event loop."""
 
+    class PygameGame:
+        """Put the game-frame logic together in one place.
+
+        Add or replace game event, update, and drawing logic in run_frame().
+        The Tkinter app owns the Pygame window and calls this once per frame.
+        """
+        
+        def __init__(self):
+            self.color = BLUE
+
+        def run_frame(self, screen):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.color = ORANGE if self.color == BLUE else BLUE
+
+            screen.fill(self.color)
+            pygame.draw.rect(screen, (255, 255, 255), (250, 150, 100, 100))
+            pygame.display.flip()
+            return True
+
     def __init__(self):
         self.running = True
-        self.color = BLUE
+        self.game = self.PygameGame()
         self.imported_json = None
         self.windowed_geometry = f"{WINDOW_SIZE[0]}x{WINDOW_SIZE[1]}"
         self.is_maximized = False
@@ -215,23 +241,10 @@ class PygameTkinterApp:
         except tk.TclError:
             pass
 
-    def handle_pygame_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.color = ORANGE if self.color == BLUE else BLUE
-
-    def draw(self):
-        self.screen.fill(self.color)
-        pygame.draw.rect(self.screen, (255, 255, 255), (250, 150, 100, 100))
-        pygame.display.flip()
-
     def run(self):
         try:
             while self.running:
-                self.handle_pygame_events()
-                self.draw()
+                self.running = self.game.run_frame(self.screen)
                 try:
                     self.root.update()
                 except tk.TclError:
