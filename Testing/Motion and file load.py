@@ -28,45 +28,6 @@ dt = 0
 save_status = None
 save_status_until = 0
 
-class Window_Border:
-    def draw_border():
-        pygame.draw.rect(screen, (255, 255, 255), (0, 0, windowRect.width, 36))
-    
-    def draw_X():
-        rect = pygame.Rect(windowRect.width - (46 * 1), 0, 46, 36)
-        if rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, (255, 0, 0), (windowRect.width - (46 * 1), 0, windowRect.width, 36))
-            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 19, 12), (windowRect.width - 29, 22), 2)
-            pygame.draw.line(screen, (255, 255, 255), (windowRect.width - 29, 12), (windowRect.width - 19, 22), 2)
-            
-        else:
-            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 19, 12), (windowRect.width - 29, 22), 1)
-            pygame.draw.line(screen, (0, 0, 0), (windowRect.width - 29, 12), (windowRect.width - 19, 22), 1)
-    
-    def draw_fullscreen():
-        rect = pygame.Rect(windowRect.width - (46 * 2), 0, 46, 36)
-        if rect.collidepoint(pygame.mouse.get_pos()):
-            button_color = (230, 230, 230)
-            pygame.draw.rect(screen, (230, 230, 230), (windowRect.width - (46 * 2), 0, 46, 36))
-        else:
-            button_color = (255, 255, 255)
-            
-        
-        pygame.draw.rect(screen, button_color, (windowRect.width - (46 * 2) + 15, 13, 12, 12), 1)
-        pygame.draw.rect(screen, (50, 50, 50), (windowRect.width - (46 * 2) + 15, 13, 12, 12), 1)
-        pygame.draw.rect(screen, button_color, (windowRect.width - (46 * 2) + 19, 9, 12, 12))
-        pygame.draw.rect(screen, (50, 50, 50), (windowRect.width - (46 * 2) + 19, 9, 12, 12), 1)
-                
-    def draw_minimize():
-        rect = pygame.Rect(windowRect.width - (46 * 3), 0, 46, 36)
-        if rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(screen, (230, 230, 230), (windowRect.width - (46 * 3), 0, 46, 36))
-            
-        pygame.draw.line(screen, (50, 50, 50), (windowRect.width - (46 * 3) + 17, 16), (windowRect.width - (46 * 3) + 29, 16), 1)
-        
-        
-        
-
 class label:
     def objectValues(vx, vy, ax, ay, elapsedTime):
         values = [
@@ -218,16 +179,9 @@ class FileHandler:
             FileHandler.loaded = file_path
             save_status = 'Saved!'
             save_status_until = pygame.time.get_ticks() + 1200
-             
-             
-
-# objects.append(Static_Body(20, 100, 10))
-# objects.append(Dynamic_Body(-30, -100, None, [-10, 100], [0, -20], 10))
-# objects.append(Dynamic_Body(-70, 200, None, [100, 25], [-10, -9.81], 10))
 
 initial_objects = copy.deepcopy(objects)
 
-           
 
 running = True
 while running:
@@ -285,10 +239,6 @@ while running:
     for obj in objects:
         obj.update(dt)
 
-    Window_Border.draw_border()
-    Window_Border.draw_X()
-    Window_Border.draw_fullscreen()
-    Window_Border.draw_minimize()
     if save_status:
         if save_status in ('Saved!', 'Loaded!') and pygame.time.get_ticks() >= save_status_until:
             save_status = None

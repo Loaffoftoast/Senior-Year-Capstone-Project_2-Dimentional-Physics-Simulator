@@ -154,7 +154,6 @@ class PygameTkinterApp:
         self.is_maximized = False
         self.minimizing = False
         self.root = tk.Tk()
-        #self.root.wm_overrideredirect(True)
         self.root.title("Pygame Embedded in Tkinter")
         self.root.geometry(f"{WINDOW_SIZE[0]}x{WINDOW_SIZE[1]}")
         self.root.configure(bg=WINDOW_BACKGROUND)

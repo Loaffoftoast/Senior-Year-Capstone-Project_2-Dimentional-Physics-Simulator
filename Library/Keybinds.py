@@ -16,16 +16,16 @@ class keybind:
     spacePressed = False
 
     def getPressed(keyPressed):
-        if keyPressed[pygame.K_ESCAPE]: 
-            sim.stop()
+        #if keyPressed[pygame.K_ESCAPE]: 
+        #    sim.stop()
 
-        if keyPressed[pygame.K_F11]: 
-            display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
-            sim.fullscreen(display.isFullscreen)
+        #if keyPressed[pygame.K_F11]: 
+        #    display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
+        #    sim.fullscreen(display.isFullscreen)
             
-        if keyPressed[pygame.K_RETURN] and (keyPressed[pygame.K_LALT] or keyPressed[pygame.K_RALT]):
-            display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
-            sim.fullscreen(display.isFullscreen)
+        #if keyPressed[pygame.K_RETURN] and (keyPressed[pygame.K_LALT] or keyPressed[pygame.K_RALT]):
+        #    display.isFullscreen = not display.isFullscreen # flips the fullscreen bool value
+        #    sim.fullscreen(display.isFullscreen)
 
         if keyPressed[pygame.K_UP]: 
             if keybind.upPressed == False:
@@ -43,13 +43,13 @@ class keybind:
         elif not keyPressed[pygame.K_DOWN]: 
             keybind.downPressed = False
 
-        if keyPressed[pygame.K_SPACE]:
-            if not keybind.spacePressed:
-                objectsClass.newObject()
-                objectsClass.nextObjectTime = sim.currentTime + 200
-            elif sim.currentTime >= objectsClass.nextObjectTime:
-                objectsClass.newObject()
-                objectsClass.nextObjectTime = sim.currentTime + 200
-            keybind.spacePressed = keyPressed[pygame.K_SPACE]
-        else:
-            keybind.spacePressed = False
+        #if keyPressed[pygame.K_SPACE]:
+        #    if not keybind.spacePressed:
+        #        objectsClass.newObject()
+        #        objectsClass.nextObjectTime = sim.currentTime + 200
+        #    elif sim.currentTime >= objectsClass.nextObjectTime:
+        #        objectsClass.newObject()
+        #        objectsClass.nextObjectTime = sim.currentTime + 200
+        #    keybind.spacePressed = keyPressed[pygame.K_SPACE]
+        #else:
+        #    keybind.spacePressed = False
