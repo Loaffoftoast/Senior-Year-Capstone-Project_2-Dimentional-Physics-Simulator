@@ -3,6 +3,7 @@ import sys
 import copy
 import json
 from pygame._sdl2 import Window
+from pathlib import Path
 
 pygame.init()
 font = pygame.font.Font(None, 28)
@@ -28,6 +29,9 @@ dt = 0
 save_status = None
 save_status_until = 0
 
+saves_dir = Path(__file__).resolve().parent.parent / "Saves"
+saves_dir.mkdir(parents=True, exist_ok=True)
+
 class label:
     def objectValues(vx, vy, ax, ay, elapsedTime):
         values = [
@@ -38,19 +42,19 @@ class label:
         for index, value in enumerate(values):
             screen.blit(font.render(value, True, (255, 255, 255)), (15, 15 + index * 30))
                     
-class Dynamic_Body:
-    global centerPosX, centerPosY
-    def __init__(self, dy, dx, mass, v, a, r):
+class Body:
+    def __init__(self, dy, dx, radius, mass, v, a):
         self.dx = centerPosX + dx
         self.dy = centerPosY + dy
 
         self.vx = v[0]
         self.vy = v[1]
-        
+
         self.ax = a[0]
         self.ay = a[1]
 
-        self.r = r
+        self.mass = mass
+        self.r = radius
         self.path = [(int(self.dx), int(self.dy))]
         
     def update(self, dt):
@@ -66,18 +70,7 @@ class Dynamic_Body:
         
         pygame.draw.circle(screen, (255, 255, 255), (self.dx, self.dy), self.r)
         
-        
-class Static_Body:
-    global centerPosX, centerPosY
-    def __init__(self, dy, dx, r):
-        self.dx = centerPosX + dx
-        self.dy = centerPosY + dy
 
-        self.r = r
-        
-    def update(self, dt):
-        pygame.draw.circle(screen, (255, 255, 255), (self.dx, self.dy), self.r)
-        
 objects = []
 
 dragging = False
@@ -102,6 +95,7 @@ class FileHandler:
 
         file_path = filedialog.askopenfilename(
             title='Select Data File',
+            initialdir=str(saves_dir),
             filetypes=[
                 ('JSON files', '*.json *.JSON'),
             ],
@@ -120,15 +114,14 @@ class FileHandler:
             for item in data['objects']:
                 dx = item['x'] - centerPosX
                 dy = item['y'] - centerPosY
-                if item['type'] == 'dynamic':
-                    obj = Dynamic_Body(
-                        dy, dx, item.get('mass'), item['velocity'],
-                        item['acceleration'], item['radius']
-                    )
-                elif item['type'] == 'static':
-                    obj = Static_Body(dy, dx, item['radius'])
-                else:
-                    raise ValueError(f"Unknown object type: {item['type']}")
+                obj = Body(
+                    dy,
+                    dx,
+                    item['radius'],
+                    item.get('mass', mass),
+                    item['v'],
+                    item['a'],
+                )
                 loaded_objects.append(obj)
 
             objects = loaded_objects
@@ -144,6 +137,7 @@ class FileHandler:
         if FileHandler.loaded == None: 
             file_path = filedialog.asksaveasfilename(
                 title='Save Data File',
+                initialdir=str(saves_dir),
                 defaultextension='.JSON',
                 filetypes=[
                     ('JSON files', '*.json *.JSON'),
@@ -160,19 +154,17 @@ class FileHandler:
 
             data = {'objects': []}
             for obj in initial_objects:
-                item = {
-                    'type': 'dynamic' if isinstance(obj, Dynamic_Body) else 'static',
+                if not isinstance(obj, Body):
+                    continue
+
+                data['objects'].append({
                     'x': obj.dx,
                     'y': obj.dy,
                     'radius': obj.r,
-                }
-                if isinstance(obj, Dynamic_Body):
-                    item.update({
-                        'mass': getattr(obj, 'mass', None),
-                        'velocity': [obj.vx, obj.vy],
-                        'acceleration': [obj.ax, obj.ay],
-                    })
-                data['objects'].append(item)
+                    'mass': obj.mass,
+                    'v': [obj.vx, obj.vy],
+                    'a': [obj.ax, obj.ay],
+                })
 
             with open(file_path, 'w') as f:
                 json.dump(data, f, indent=2)
@@ -181,6 +173,20 @@ class FileHandler:
             save_status_until = pygame.time.get_ticks() + 1200
 
 initial_objects = copy.deepcopy(objects)
+
+
+def create_Body():
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    obj = Body(
+        mouse_y - centerPosY,
+        mouse_x - centerPosX,
+        10,
+        mass,
+        v.copy(),
+        [0.0, -9.81],
+    )
+    objects.append(obj)
+    initial_objects.append(copy.deepcopy(obj))
 
 
 running = True
@@ -223,6 +229,8 @@ while running:
                 FileHandler.load()
             elif event.key == pygame.K_s:
                 FileHandler.save()
+            elif event.key == pygame.K_n:
+                create_Body()
         elif event.type == pygame.KEYUP and event.key in (pygame.K_RIGHT, pygame.K_LEFT):
             timeScale = 0.0
 
